@@ -9,7 +9,7 @@ includes = -I/usr/include -I$(base)/include
 links = -L$(derived) -l
 
 src_files = $(base)/src/IrcConnector.cpp main.cpp
-include_files = $(base)/include/IrcConnector.hpp
+include_files = $(base)/include/IrcConnector.hpp $(base)/include/assert.hpp
 
 debugFlags = -g -DDEBUG
 ndebugFlags = -O3 -DNDEBUG
