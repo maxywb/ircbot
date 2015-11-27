@@ -16,6 +16,6 @@ int main(void) {
   std::string servername = "servername";
   std::string realname = "realname";
 
-  ircbot::IrcConnector connection(server, port, password, username, hostname, servername, realname);
-  connection.connect();
+  ircbot::IrcConnector connector(server, port, password, username, hostname, servername, realname);
+  connector.demo();
 }

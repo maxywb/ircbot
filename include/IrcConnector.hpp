@@ -13,7 +13,6 @@ namespace ircbot
 class IrcConnector
 {
  private:
-  IrcConnector() = delete;
 
   std::string server_;
   size_t port_;
@@ -22,8 +21,6 @@ class IrcConnector
   std::string hostname_;
   std::string servername_;
   std::string realname_;
-
-  void pong();
 
  public:
 
@@ -35,7 +32,8 @@ class IrcConnector
                std::string servername,
                std::string realname);
 
-  void connect();
+  void demo();
+  void pong();
 
 };
 
