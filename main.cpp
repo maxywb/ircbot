@@ -1,8 +1,4 @@
 #include <string>
-#include <cstring>      // Needed for memset
-#include <sys/socket.h> // Needed for the socket functions
-#include <netdb.h>      // Needed for the socket functions
-#include <thread>
 
 #include "IrcConnector.hpp"
 
@@ -29,8 +25,9 @@ int main(void) {
   connector.read();
 
   connector.join("#boatz");
+
   connector.read();
 
   connector.privmsg("#boatz", "sup");
-  
+  connector.quit();
 }
