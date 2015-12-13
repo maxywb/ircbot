@@ -173,5 +173,13 @@ void IrcConnector::quit()
   }
 }
 
+void IrcConnector::pong(std::string const & value)
+{
+  std::string const message = "PONG " 
+                              + value;
+  write(message);
+}
+
+
 }
 

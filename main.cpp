@@ -1,7 +1,10 @@
 #include <string>
+#include <memory>
+
+#include <boost/algorithm/string.hpp>
 
 #include "IrcConnector.hpp"
-
+#include "PingResponder.hpp"
 
 int main(void) {
   
@@ -9,25 +12,56 @@ int main(void) {
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
-  ircbot::IrcConnector connector;
+  std::shared_ptr<ircbot::IrcConnector> connector =
+      std::make_shared<ircbot::IrcConnector>();
 
-  connector.connect(server, port);
-  connector.read();
+  ircbot::PingResponder pingResponder;
+
+  pingResponder.subscribe(connector);
+
+  connector->connect(server, port);
+
+
 
   // this will at most 5 seconds due to timeout, by then rizon will be ready
   for (int i = 0; i < 5; ++i) {  
-    connector.read();
+    std::string buf = connector->read();
+    std::vector<std::string> lines;
+    boost::split(lines, buf, boost::is_any_of("\n"));
+
+    for (auto line : lines) {
+      pingResponder.consume(line);
+    }
+
   }
 
-  connector.user(nick);
-  connector.nick(nick);
+  connector->user(nick);
+  connector->nick(nick);
 
-  connector.read();
+  // this will at most 5 seconds due to timeout, by then rizon will be ready
+  for (int i = 0; i < 5; ++i) {  
+    std::string buf = connector->read();
+    std::vector<std::string> lines;
+    boost::split(lines, buf, boost::is_any_of("\n"));
 
-  connector.join("#boatz");
+    for (auto line : lines) {
+      pingResponder.consume(line);
+    }
 
-  connector.read();
+  }
 
-  connector.privmsg("#boatz", "sup");
-  connector.quit();
+  connector->join("#boatz");
+
+
+  while (true) {
+    
+    std::string buf = connector->read();
+    std::vector<std::string> lines;
+    boost::split(lines, buf, boost::is_any_of("\n"));
+
+    for (auto line : lines) {
+      pingResponder.consume(line);
+    }
+  }
+  connector->quit();
 }

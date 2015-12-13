@@ -1,6 +1,7 @@
 #ifndef IRCBOT_IRCCONNECTOR_HPP
 #define IRCBOT_IRCCONNECTOR_HPP
 
+#include <forward_list>
 #include <string>
 #include <mutex>
 
@@ -39,7 +40,9 @@ class IrcConnector
   std::string read();
 
   // misc commands
+  void pong(std::string const & value);
   void quit();
+
 
 };
 
