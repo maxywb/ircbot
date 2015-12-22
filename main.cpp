@@ -1,13 +1,25 @@
+#include <atomic>
 #include <string>
 #include <memory>
-
-#include <boost/algorithm/string.hpp>
+#include <chrono>
+#include <signal.h>
 
 #include "IrcConnector.hpp"
 #include "PingResponder.hpp"
+#include "OperationManager.hpp"
+
+std::atomic<bool> running_s(true);
+
+void signal_handler(int /*signal*/)
+{
+  running_s = false;
+}
 
 int main(void) {
   
+  signal (SIGINT, signal_handler);
+  signal (SIGTERM, signal_handler);
+
   std::string const nick = "boatz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
@@ -15,53 +27,27 @@ int main(void) {
   std::shared_ptr<ircbot::IrcConnector> connector =
       std::make_shared<ircbot::IrcConnector>();
 
-  ircbot::PingResponder pingResponder;
+  std::shared_ptr<ircbot::PingResponder> pingResponder =
+      std::make_shared<ircbot::PingResponder>();
+  pingResponder->subscribe(connector);
 
-  pingResponder.subscribe(connector);
+  ircbot::OperationManager operationManager(connector);
+
+  operationManager.addOperation(pingResponder);
+
+  operationManager.start();
 
   connector->connect(server, port);
-
-
-
-  // this will at most 5 seconds due to timeout, by then rizon will be ready
-  for (int i = 0; i < 5; ++i) {  
-    std::string buf = connector->read();
-    std::vector<std::string> lines;
-    boost::split(lines, buf, boost::is_any_of("\n"));
-
-    for (auto line : lines) {
-      pingResponder.consume(line);
-    }
-
-  }
-
   connector->user(nick);
   connector->nick(nick);
-
-  // this will at most 5 seconds due to timeout, by then rizon will be ready
-  for (int i = 0; i < 5; ++i) {  
-    std::string buf = connector->read();
-    std::vector<std::string> lines;
-    boost::split(lines, buf, boost::is_any_of("\n"));
-
-    for (auto line : lines) {
-      pingResponder.consume(line);
-    }
-
-  }
-
   connector->join("#boatz");
+  connector->join("#/g/spam");
 
-
-  while (true) {
-    
-    std::string buf = connector->read();
-    std::vector<std::string> lines;
-    boost::split(lines, buf, boost::is_any_of("\n"));
-
-    for (auto line : lines) {
-      pingResponder.consume(line);
-    }
+  while (running_s) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
-  connector->quit();
+
+  operationManager.stop();
+  operationManager.join();
+
 }
