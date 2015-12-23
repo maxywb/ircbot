@@ -12,9 +12,10 @@ class IrcConnector;
 
 class PingResponder : public Operation
 {
- public:
-
+ private:
   PingResponder();
+ public:
+  PingResponder(std::shared_ptr<IrcConnector> ircConnection);
   ~PingResponder();
 
   void consume(std::string const match) override;

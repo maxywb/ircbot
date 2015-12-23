@@ -1,0 +1,36 @@
+#!/bin/bash
+
+base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source_directory=$base/../src
+include_directory=$base/../include
+makefile=$base/../Makefile
+
+base_hpp=$base/BaseOperation.hpp
+base_cpp=$base/BaseOperation.cpp
+
+
+if [ "$#" -ne 1 ]; then
+    echo "must supply operation name"
+    exit
+fi
+
+operation_name=$1
+upper_operation_name=`echo $operation_name | tr '[:lower:]' '[:upper:]'`
+
+dest_hpp=$include_directory/$operation_name.hpp
+dest_cpp=$source_directory/$operation_name.cpp
+
+
+cp $base_hpp $dest_hpp
+cp $base_cpp $dest_cpp
+
+sed -i "s/BaseOperation/$operation_name/g" $dest_hpp
+sed -i "s/BaseOperation/$operation_name/g" $dest_cpp
+sed -i "s/BASEOPERATION/$upper_operation_name/" $dest_hpp
+
+make_src_line="\$(base)/src/$operation_name.cpp"
+make_include_line="\$(base)/include/$operation_name.hpp"
+
+sed -i "/^src_files/ s|$| $make_src_line|" $makefile
+sed -i "/^include_files/ s|$| $make_include_line|" $makefile

@@ -28,8 +28,7 @@ int main(void) {
       std::make_shared<ircbot::IrcConnector>();
 
   std::shared_ptr<ircbot::PingResponder> pingResponder =
-      std::make_shared<ircbot::PingResponder>();
-  pingResponder->subscribe(connector);
+      std::make_shared<ircbot::PingResponder>(connector);
 
   ircbot::OperationManager operationManager(connector);
 

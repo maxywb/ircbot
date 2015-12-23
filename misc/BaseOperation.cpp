@@ -4,27 +4,25 @@
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
-#include "PingResponder.hpp"
+#include "BaseOperation.hpp"
 
 namespace ircbot
 {
 
-PingResponder::PingResponder(std::shared_ptr<IrcConnector> ircConnection)
+BaseOperation::BaseOperation(std::shared_ptr<IrcConnector> ircConnection)
     : Operation(ircConnection)
 {
-
-
-
+  // empty
 }
 
-PingResponder::~PingResponder()
+BaseOperation::~BaseOperation()
 {
-
+  // empty
 }
 
-void PingResponder::consume(std::string const line)
+void BaseOperation::consume(std::string const line)
 {
-  if (line.find("PING") == 0) {
+  if (line.find("example") == 0) {
 
 
     std::vector<std::string> strs;
