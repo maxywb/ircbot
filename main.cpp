@@ -5,6 +5,7 @@
 #include <signal.h>
 
 #include "IrcConnector.hpp"
+#include "HighlightHandler.hpp"
 #include "PingResponder.hpp"
 #include "OperationManager.hpp"
 
@@ -30,17 +31,25 @@ int main(void) {
   std::shared_ptr<ircbot::PingResponder> pingResponder =
       std::make_shared<ircbot::PingResponder>(connector);
 
+  std::shared_ptr<ircbot::HighlightHandler> highlightHandler =
+      std::make_shared<ircbot::HighlightHandler>(connector);
+
   ircbot::OperationManager operationManager(connector);
 
   operationManager.addOperation(pingResponder);
+  operationManager.addOperation(highlightHandler);
 
   operationManager.start();
 
   connector->connect(server, port);
   connector->user(nick);
   connector->nick(nick);
+
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+
   connector->join("#boatz");
-  connector->join("#/g/spam");
+
+  connector->privmsg("#boatz", "asdf fdsa qwer rewq");
 
   while (running_s) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));

@@ -43,9 +43,18 @@ void OperationManager::run()
 
     for (auto operation : operations_) {
       for (auto line : lines) {
+
+        if (line.size() == 0) {
+          continue;
+        }
+
+        PRINT(line);
+        
         operation->consume(line);
       }
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 

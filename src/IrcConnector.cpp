@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <sstream>
+#include <sys/fcntl.h>
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
@@ -24,10 +25,11 @@ IrcConnector::IrcConnector()
   ASSERT(socket_ > 0, "failed to open socket"); 
   PRINT("opened socket");
 
-  // set 1 second timeout
+#if 0
+  // set 100 millisecond timeout
   struct timeval tv;
-  tv.tv_sec = 1;  //seconds
-  tv.tv_usec = 0;  // not setting this can cause weird behavior
+  tv.tv_sec = 0;  //seconds
+  tv.tv_usec = 100;  // not setting this can cause weird behavior
   setsockopt(socket_,
              SOL_SOCKET,
              SO_RCVTIMEO,
@@ -35,6 +37,7 @@ IrcConnector::IrcConnector()
              sizeof(struct timeval));
 
   PRINT("set 1 second timeout on socket");
+#endif
 }
 
 IrcConnector::~IrcConnector()
@@ -106,6 +109,9 @@ void IrcConnector::connect(std::string const address, size_t const port)
          "failed to connect to "
          << address << ":" << port
          << ", status: " << connectStatus);
+
+  fcntl(socket_, F_SETFL, O_NONBLOCK);
+
   PRINT("connected to " << address << ":" << port);
 }
 
@@ -122,7 +128,7 @@ void IrcConnector::nick(std::string const & nick)
 
 void IrcConnector::privmsg(std::string const & who, std::string const & text)
 {
-  std::string const message = "PRIVMSG " + who + " " + text;
+  std::string const message = "PRIVMSG " + who + " :" + text;
   write(message);
 }
 
@@ -139,9 +145,9 @@ void IrcConnector::user(std::string const & username)
 std::string IrcConnector::read()
 {
   std::stringstream text;
+  char buffer[256];
 
   while (true) {
-    char buffer[256];
     std::memset(buffer,
                 0,
                 sizeof(buffer));
@@ -151,14 +157,13 @@ std::string IrcConnector::read()
                     255,
                     0);
 
-    if (size < 0) {
+    if (size <= 0) {
       break;
-    } else {
-      PRINT(buffer);
-      text << buffer;
+    } 
 
-    }
+    text << buffer;
   }
+
   return text.str();
 }
 
