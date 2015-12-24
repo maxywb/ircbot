@@ -38,7 +38,7 @@ void HighlightHandler::consume(std::string const line)
     return;
   }
 
-  ircConnection_->privmsg(dest, "fuck off");
+  ircConnection_->privmsg(dest, "no thanks");
 
 }
 

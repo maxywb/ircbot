@@ -6,9 +6,10 @@ executable = $(derived)/ircbot
 
 includes = -I/usr/include -I$(base)/include
 
-links = -L$(derived) -lpthread
+links = -L$(derived) -lpthread -lsqlite3
 
-src_files = $(base)/src/IrcConnector.cpp main.cpp $(base)/src/PingResponder.cpp $(base)/src/OperationManager.cpp $(base)/src/HighlightHandler.cpp
+src_files = $(base)/src/IrcConnector.cpp $(base)/src/PingResponder.cpp $(base)/src/OperationManager.cpp $(base)/src/HighlightHandler.cpp
+
 include_files = $(base)/include/PingResponder.hpp $(base)/include/IrcConnector.hpp $(base)/include/assert.hpp $(base)/include/Operation.hpp $(base)/include/OperationManager.hpp $(base)/include/HighlightHandler.hpp
 
 debugFlags = -g -DDEBUG
@@ -18,7 +19,12 @@ CXX_FLAGS = -std=c++11 $(debugFlags)
 
 all: main.cpp $(src_files) $(include_files) setup
 	@echo make all
-	$(CXX) $(CXX_FLAGS) -o $(executable) $(src_files) $(includes) $(links)
+	$(CXX) $(CXX_FLAGS) -o $(executable) main.cpp $(src_files) $(includes) $(links)
+
+misc: misc/make_db.cpp setup
+	@echo make misc
+	$(CXX) $(CXX_FLAGS) -o $(derived)/misc misc/make_db.cpp $(src_files) $(includes) $(links)
+
 
 .PHONY: setup
 setup:

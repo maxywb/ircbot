@@ -164,6 +164,10 @@ std::string IrcConnector::read()
     text << buffer;
   }
 
+  if (text.str().size() > 0) {
+    PRINT(text.str());
+  }
+
   return text.str();
 }
 

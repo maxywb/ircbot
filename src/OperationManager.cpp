@@ -48,8 +48,6 @@ void OperationManager::run()
           continue;
         }
 
-        PRINT(line);
-        
         operation->consume(line);
       }
     }

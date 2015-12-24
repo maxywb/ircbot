@@ -45,11 +45,9 @@ int main(void) {
   connector->user(nick);
   connector->nick(nick);
 
-  std::this_thread::sleep_for(std::chrono::seconds(2));
+  std::this_thread::sleep_for(std::chrono::seconds(5));
 
   connector->join("#boatz");
-
-  connector->privmsg("#boatz", "asdf fdsa qwer rewq");
 
   while (running_s) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));

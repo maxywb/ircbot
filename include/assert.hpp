@@ -21,6 +21,7 @@
 #ifndef NDEBUG
 #  define PRINT(message)                       \
   std::cout << message << std::endl;
+
 #else
 #  define PRINT(message) do { } while (false)
 #endif
