@@ -32,8 +32,8 @@ setup:
 
 .PHONY: clean
 clean:
-	@rm -r $(derived)
-	@rm $(executable)
+	@rm -rf $(derived)
+	@rm -f $(executable)
 
 .PHONY: run
 run: all
