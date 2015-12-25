@@ -8,9 +8,9 @@ includes = -I/usr/include -I$(base)/include
 
 links = -L$(derived) -lpthread -lsqlite3
 
-src_files = $(base)/src/IrcConnector.cpp $(base)/src/PingResponder.cpp $(base)/src/OperationManager.cpp $(base)/src/HighlightHandler.cpp
+src_files = $(base)/src/IrcConnector.cpp $(base)/src/PingResponder.cpp $(base)/src/OperationManager.cpp $(base)/src/HighlightHandler.cpp $(base)/src/DBManager.cpp
 
-include_files = $(base)/include/PingResponder.hpp $(base)/include/IrcConnector.hpp $(base)/include/assert.hpp $(base)/include/Operation.hpp $(base)/include/OperationManager.hpp $(base)/include/HighlightHandler.hpp
+include_files = $(base)/include/PingResponder.hpp $(base)/include/IrcConnector.hpp $(base)/include/assert.hpp $(base)/include/Operation.hpp $(base)/include/OperationManager.hpp $(base)/include/HighlightHandler.hpp $(base)/include/DBManager.hpp
 
 debugFlags = -g -DDEBUG
 ndebugFlags = -O3 -DNDEBUG
@@ -23,8 +23,7 @@ all: main.cpp $(src_files) $(include_files) setup
 
 misc: misc/make_db.cpp setup
 	@echo make misc
-	$(CXX) $(CXX_FLAGS) -o $(derived)/misc misc/make_db.cpp $(src_files) $(includes) $(links)
-
+	$(CXX) $(CXX_FLAGS) -o $(derived)/misc misc/make_db.cpp  $(links) #$(src_files) $(includes)
 
 .PHONY: setup
 setup:

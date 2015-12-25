@@ -39,7 +39,7 @@ bool execute_sql_statement(sqlite3 * db,
 
     return false;
   }else{
-    std::cout << "Table created successfully"
+    std::cout << "statement(s) executed successfully"
               << std::endl;
 
     return true;
@@ -109,7 +109,6 @@ void populate_initial(std::string const db_file)
   // 
   char const * populate_config =
       "insert into config(id, tag, config)" \
-      "insert into config(id, tag, config)" \
       "values(NULL, 'channel','/g/spam');" \
       "insert into config(id, tag, config)" \
       "values(NULL, 'channel','boatz');" \
@@ -117,6 +116,30 @@ void populate_initial(std::string const db_file)
       "values(NULL, 'channel','lifting');" \
       "insert into config(id, tag, config)" \
       "values(NULL, 'channel','/diy/');" \
+      ;
+  execute_sql_statement(db, populate_config);
+
+  sqlite3_close(db);
+}
+
+void test(std::string const db_file)
+{
+
+  sqlite3 * db;
+
+  // open db 
+  if (sqlite3_open(db_file.c_str(), &db)){
+    std::cout << "Can't open database: "
+              << sqlite3_errmsg(db) << std::endl;
+    exit(0);
+  } else{
+    std::cout << "Opened database successfully"
+              << std::endl;
+  }
+
+  char const * populate_config =
+      "select config from config " \
+      "where tag = 'vhost_password';" \
       ;
   execute_sql_statement(db, populate_config);
 
@@ -138,6 +161,8 @@ int main(int argc, char ** argv)
     make_tables(db_file);
   } else if (command == "--populate-initial") {
     populate_initial(db_file);
+  } else if (command == "--test") {
+    test(db_file);
   } else{
     std::cout << "unknown option: " << argv[1] << std::endl;
     return -1;
