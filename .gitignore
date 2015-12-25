@@ -1,6 +1,9 @@
 # emacs
 *~
 
+# derived files
+derived
+
 # Compiled Object files
 *.slo
 *.lo
