@@ -1,39 +1,84 @@
-base = $(shell pwd)
+BASE = $(shell pwd)
 
-derived = $(base)/derived
+CXX = g++
 
-executable = $(derived)/ircbot
+DERIVED = $(BASE)/derived
 
-includes = -I/usr/include -I$(base)/include
+EXECUTABLE = $(DERIVED)/ircbot
 
-links = -L$(derived) -lpthread -lsqlite3
+PYTHON_LD_FLAGS = `python-config --ldflags`
+PYTHON_INCLUDE_FLAGS = `python-config --includes`
 
-src_files = $(base)/src/IrcConnector.cpp $(base)/src/PingResponder.cpp $(base)/src/OperationManager.cpp $(base)/src/HighlightHandler.cpp $(base)/src/DBManager.cpp
+BOOST_INC = /usr/include
+BOOST_LIB = /usr/lib/
+BOOST_LD_FLAGS = -L$(BOOST_LIB) -lboost_python
+BOOST_INCLUDE_FLAGS = -I$(BOOST_INC)
 
-include_files = $(base)/include/PingResponder.hpp $(base)/include/IrcConnector.hpp $(base)/include/assert.hpp $(base)/include/Operation.hpp $(base)/include/OperationManager.hpp $(base)/include/HighlightHandler.hpp $(base)/include/DBManager.hpp
+SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp 
 
-debugFlags = -g -DDEBUG
-ndebugFlags = -O3 -DNDEBUG
+HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp 
 
-CXX_FLAGS = -std=c++11 $(debugFlags) 
+IRCBOT_LD_FLAGS = -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler 
 
-all: main.cpp $(src_files) $(include_files) setup
-	@echo make all
-	$(CXX) $(CXX_FLAGS) -o $(executable) main.cpp $(src_files) $(includes) $(links)
+INCLUDES = -I/usr/include -I$(BASE)/include $(PYTHON_INCLUDE_FLAGS) $(BOOST_INCLUDE_FLAGS)
+LINKS = -L$(DERIVED) -lpthread $(BOOST_LD_FLAGS) $(PYTHON_LD_FLAGS) $(IRCBOT_LD_FLAGS)
+
+DEBUGFLAGS = -g -DDEBUG
+NDEBUGFLAGS = -O3 -DNDEBUG
+
+CXX_FLAGS = -std=c++11 $(DEBUGFLAGS) 
+
+DEPEND = $(DERIVED)/depend.mk
+
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): main.cpp so
+	$(CXX) $(CXX_FLAGS) -o $(EXECUTABLE) main.cpp $(INCLUDES) $(LINKS)
+
+$(DEPEND): $(SRC_FILES) # ATTN: doesn't properly depend on $(DERIVED)
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -MM $<>>$(DEPEND);
+
+so: $(DEPEND) $(DERIVED) $(DERIVED)/libIrcConnector.so $(DERIVED)/libPingResponder.so $(DERIVED)/libOperationManager.so $(DERIVED)/libHighlightHandler.so
+
+$(DERIVED)/libIrcConnector.so: $(DERIVED)/IrcConnector.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
+
+$(DERIVED)/IrcConnector.o: $(BASE)/src/IrcConnector.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+$(DERIVED)/libPingResponder.so: $(DERIVED)/PingResponder.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
+
+$(DERIVED)/PingResponder.o: $(BASE)/src/PingResponder.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+$(DERIVED)/libOperationManager.so: $(DERIVED)/OperationManager.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
+
+$(DERIVED)/OperationManager.o: $(BASE)/src/OperationManager.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+$(DERIVED)/libHighlightHandler.so: $(DERIVED)/HighlightHandler.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
+
+$(DERIVED)/HighlightHandler.o: $(BASE)/src/HighlightHandler.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+### misc and testing
 
 misc: misc/make_db.cpp setup
 	@echo make misc
-	$(CXX) $(CXX_FLAGS) -o $(derived)/misc misc/make_db.cpp  $(links) #$(src_files) $(includes)
+	$(CXX) $(CXX_FLAGS) -o $(DERIVED)/misc misc/make_db.cpp  $(LINKS) #$(SRC_FILES) $(INCLUDES)
 
-.PHONY: setup
-setup:
-	mkdir -p derived
+.PHONY: $(DERIVED)
+$(DERIVED): 
+	@mkdir -p derived
 
 .PHONY: clean
 clean:
-	@rm -rf $(derived)
-	@rm -f $(executable)
+	@rm -rf $(DERIVED)
 
 .PHONY: run
 run: all
-	$(executable)
+	$(EXECUTABLE)
+
