@@ -31,18 +31,18 @@ CXX_FLAGS = -std=c++11 $(DEBUGFLAGS)
 
 DEPEND = $(DERIVED)/depend.mk
 
-all: so $(EXECUTABLE)
+all: so $(EXECUTABLE) python_so
 
 $(EXECUTABLE): so python_so main.cpp
 	$(CXX) $(CXX_FLAGS) -o $(EXECUTABLE) main.cpp $(INCLUDES) $(LINKS)
 
-$(DEPEND): $(SRC_FILES) # ATTN: doesn't properly depend on $(DERIVED)
-	$(CXX) $(CXX_FLAGS) $(INCLUDES) -MM $<>>$(DEPEND);
+$(DEPEND): $(SRC_FILES) $(DERIVED) # ATTN: doesn't properly depend on $(DERIVED)
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -MM $(SRC_FILES)>>$(DEPEND);
 
 python_so: $(DERIVED)/libpyircbot.so so
 
-$(DERIVED)/libpyircbot.so: $(DERIVED)/pyircbot.o
-	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic -o $@ $< $(INCLUDES) $(IRCBOT_LD_FLAGS_NO_PYTHON)
+$(DERIVED)/libpyircbot.so: $(DERIVED)/pyircbot.o so
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic -o $@ $(DERIVED)/pyircbot.o $(INCLUDES) $(IRCBOT_LD_FLAGS_NO_PYTHON)
 	@ln -f $@ $(DERIVED)/pyircbot.so
 
 $(DERIVED)/pyircbot.o: $(BASE)/src/PythonModule.cpp 
