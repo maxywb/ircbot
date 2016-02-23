@@ -1,8 +1,10 @@
 #ifndef IRCBOT_HIGHLIGHTHANDLER_HPP
 #define IRCBOT_HIGHLIGHTHANDLER_HPP
 
-#include <memory>
 #include <string>
+
+#include <boost/shared_ptr.hpp>
+
 
 #include "Operation.hpp"
 
@@ -16,7 +18,7 @@ class HighlightHandler : public Operation
  private:
   HighlightHandler();
  public:
-  HighlightHandler(std::shared_ptr<IrcConnector> ircConnection);
+  HighlightHandler(boost::shared_ptr<IrcConnector> ircConnection);
   ~HighlightHandler();
 
   void consume(std::string const match) override;

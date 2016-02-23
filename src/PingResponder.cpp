@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
@@ -9,7 +10,7 @@
 namespace ircbot
 {
 
-PingResponder::PingResponder(std::shared_ptr<IrcConnector> ircConnection)
+PingResponder::PingResponder(boost::shared_ptr<IrcConnector> ircConnection)
     : Operation(ircConnection)
 {
 

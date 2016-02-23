@@ -3,8 +3,9 @@
 
 #include <atomic>
 #include <forward_list>
-#include <memory>
 #include <thread>
+
+#include <boost/shared_ptr.hpp>
 
 namespace ircbot
 {
@@ -15,9 +16,9 @@ class IrcConnector;
 class OperationManager
 {
  private:
-  std::forward_list<std::shared_ptr<Operation> > operations_;
+  std::forward_list<boost::shared_ptr<Operation> > operations_;
 
-  std::shared_ptr<IrcConnector> ircConnection_;
+  boost::shared_ptr<IrcConnector> ircConnection_;
 
   std::atomic<bool> running_;
 
@@ -28,14 +29,14 @@ class OperationManager
 
  public:
 
-  explicit OperationManager(std::shared_ptr<IrcConnector> ircConnection);
+  explicit OperationManager(boost::shared_ptr<IrcConnector> ircConnection);
 
   void start();
   void stop();
 
   void join();
 
-  void addOperation(std::shared_ptr<Operation> operation);
+  void addOperation(boost::shared_ptr<Operation> operation);
 
 };
 

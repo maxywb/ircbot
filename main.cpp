@@ -1,8 +1,11 @@
 #include <atomic>
 #include <string>
-#include <memory>
 #include <chrono>
 #include <signal.h>
+
+#include <boost/make_shared.hpp>
+#include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "IrcConnector.hpp"
 #include "HighlightHandler.hpp"
@@ -18,6 +21,23 @@ void signal_handler(int /*signal*/)
 
 int main(void) {
   
+  Py_Initialize();
+  try {
+  boost::python::object mainModule = boost::python::import("__main__");
+  boost::python::object mainNamespace = mainModule.attr("__dict__");
+
+  boost::python::object derivedModule = boost::python::import("derived.pyircbot");
+
+#if 0
+  boost::python::object ignored = boost::python::exec("import python \n"
+                                                      "h = python.HelloResponder \n",
+                                                      mainNamespace);
+#endif
+  } catch (boost::python::error_already_set const &) {
+    PyErr_Print();
+  }
+
+  return 0;
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
@@ -25,14 +45,14 @@ int main(void) {
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
-  std::shared_ptr<ircbot::IrcConnector> connector =
-      std::make_shared<ircbot::IrcConnector>();
+  boost::shared_ptr<ircbot::IrcConnector> connector =
+      boost::make_shared<ircbot::IrcConnector>();
 
-  std::shared_ptr<ircbot::PingResponder> pingResponder =
-      std::make_shared<ircbot::PingResponder>(connector);
+  boost::shared_ptr<ircbot::PingResponder> pingResponder =
+      boost::make_shared<ircbot::PingResponder>(connector);
 
-  std::shared_ptr<ircbot::HighlightHandler> highlightHandler =
-      std::make_shared<ircbot::HighlightHandler>(connector);
+  boost::shared_ptr<ircbot::HighlightHandler> highlightHandler =
+      boost::make_shared<ircbot::HighlightHandler>(connector);
 
   ircbot::OperationManager operationManager(connector);
 

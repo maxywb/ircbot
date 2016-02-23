@@ -4,6 +4,7 @@
 #include <string>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
@@ -14,7 +15,7 @@ namespace ircbot
 {
 
 
-OperationManager::OperationManager(std::shared_ptr<IrcConnector> ircConnection)
+OperationManager::OperationManager(boost::shared_ptr<IrcConnector> ircConnection)
     : running_(true),
       ircConnection_(ircConnection)
 {
@@ -61,7 +62,7 @@ void OperationManager::join()
   worker_.join();
 }
 
-void OperationManager::addOperation(std::shared_ptr<Operation> operation)
+void OperationManager::addOperation(boost::shared_ptr<Operation> operation)
 {
   operations_.push_front(operation);
 }

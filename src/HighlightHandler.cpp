@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
@@ -9,7 +11,7 @@
 namespace ircbot
 {
 
-HighlightHandler::HighlightHandler(std::shared_ptr<IrcConnector> ircConnection)
+HighlightHandler::HighlightHandler(boost::shared_ptr<IrcConnector> ircConnection)
     : Operation(ircConnection)
 {
   // empty

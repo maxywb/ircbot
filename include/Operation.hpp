@@ -1,25 +1,38 @@
 #ifndef IRCBOT_OPERATION_HPP
 #define IRCBOT_OPERATION_HPP
 
-#include <memory>
+#include <boost/shared_ptr.hpp>
+
+#include "assert.hpp"
 
 namespace ircbot
 {
 
 class IrcConnector;
 
+// not pure virtual becuase Boost::Python needs implemented base class to be wrapped28
 class Operation
 {
  protected:
-  std::shared_ptr<IrcConnector> ircConnection_;
+  boost::shared_ptr<IrcConnector> ircConnection_;
   
  public:
+  Operation()
+  {
+    ASSERT(false, "Can't implement base Operation class;");
+  }
 
-  Operation(std::shared_ptr<IrcConnector> ircConnection)
+  Operation(boost::shared_ptr<IrcConnector> ircConnection)
       :     ircConnection_(ircConnection)
-  {}  
+  {
+  }  
 
-  virtual void consume(std::string const match) = 0;
+  virtual ~Operation() = default;
+
+  virtual void consume(std::string const match)
+  {
+    ASSERT(false, "Can't implement base Operation class;");
+  }
 
 };
 
