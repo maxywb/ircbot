@@ -24,14 +24,16 @@ IRCBOT_LD_FLAGS = $(IRCBOT_LD_FLAGS_NO_PYTHON) -lpyircbot
 INCLUDES = -I/usr/include -I$(BASE)/include $(PYTHON_INCLUDE_FLAGS) $(BOOST_INCLUDE_FLAGS)
 LINKS = $(BOOST_LD_FLAGS) $(PYTHON_LD_FLAGS) $(IRCBOT_LD_FLAGS) -lpthread 
 
-DEBUGFLAGS = -g -DDEBUG
-NDEBUGFLAGS = -O3 -DNDEBUG
+DEBUGFLAGS = -g3 -DDEBUG
 
-CXX_FLAGS = -std=c++11 $(DEBUGFLAGS) 
+CXX_FLAGS = -std=c++11 -O3
 
 DEPEND = $(DERIVED)/depend.mk
 
 all: so $(EXECUTABLE) python_so
+
+debug: CXX_FLAGS += $(DEBUGFLAGS)
+debug: all
 
 $(EXECUTABLE): so python_so main.cpp
 	$(CXX) $(CXX_FLAGS) -o $(EXECUTABLE) main.cpp $(INCLUDES) $(LINKS)
