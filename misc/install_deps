@@ -1,2 +1,0 @@
-#!/bin/bash
-apt-get install libboost-all-dev sqlite3 libsqlite3-dev 
