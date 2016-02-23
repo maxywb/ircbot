@@ -32,3 +32,6 @@ derived
 *.exe
 *.out
 *.app
+
+# Python
+*.pyc
