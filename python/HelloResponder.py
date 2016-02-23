@@ -10,9 +10,11 @@ class HelloResponder(derived.pyircbot.PythonOperation):
         try:
             who, what, where, message = split_privmsg(line)
 
-            print len(message), message
+            if len(message) <=0:
+                return
+
             if message[0] == "hi":
-                print "got one"
                 self._irc_connection.privmsg(where, "hi %s" % who[0])
+
         except Exception as e:
-            print "\n\n\n\n\n", e,  "\n\n\n\n\n"
+            print e

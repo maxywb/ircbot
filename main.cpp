@@ -73,6 +73,8 @@ int main(void) {
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     connector->join("#boatz");
+    connector->join("#lifting");
+    connector->join("#diy");
 
     while (running_s) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
