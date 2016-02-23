@@ -5,10 +5,13 @@
 #include <string>
 #include <mutex>
 
+#include "IrcConnectorInterface.hpp"
+
 namespace ircbot
 {
 
-class IrcConnector
+
+class IrcConnector : public IrcConnectorInterface
 {
  private:
 
@@ -28,20 +31,20 @@ class IrcConnector
   ~IrcConnector();
 
   void connect(std::string const addres,
-               size_t const port);
+               size_t const port) override;
 
   // sending commands
-  void join(std::string const & channel);
-  void nick(std::string const & nick);
-  void privmsg(std::string const & who, std::string const & message);
-  void user(std::string const & username);
+  void join(std::string const & channel) override;
+  void nick(std::string const & nick) override;
+  void privmsg(std::string const & who, std::string const & message) override;
+  void user(std::string const & username) override;
 
   // reading commands
-  std::string read();
+  std::string read() override;
 
   // misc commands
-  void pong(std::string const & value);
-  void quit();
+  void pong(std::string const & value) override;
+  void quit() override;
 
 
 };

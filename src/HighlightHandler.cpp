@@ -5,13 +5,13 @@
 #include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
-#include "IrcConnector.hpp"
+#include "IrcConnectorInterface.hpp"
 #include "HighlightHandler.hpp"
 
 namespace ircbot
 {
 
-HighlightHandler::HighlightHandler(boost::shared_ptr<IrcConnector> ircConnection)
+HighlightHandler::HighlightHandler(boost::shared_ptr<IrcConnectorInterface> ircConnection)
     : Operation(ircConnection)
 {
   // empty

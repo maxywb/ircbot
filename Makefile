@@ -16,7 +16,7 @@ BOOST_INCLUDE_FLAGS = -I$(BOOST_INC)
 
 SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp $(BASE)/src/PythonModule.cpp
 
-HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp 
+HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnectorInterface.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp 
 
 IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lPythonOperation 
 IRCBOT_LD_FLAGS = $(IRCBOT_LD_FLAGS_NO_PYTHON) -lpyircbot

@@ -11,14 +11,14 @@
 namespace ircbot
 {
 
-class IrcConnector;
+class IrcConnectorInterface;
 
 class HighlightHandler : public Operation
 {
  private:
   HighlightHandler();
  public:
-  HighlightHandler(boost::shared_ptr<IrcConnector> ircConnection);
+  HighlightHandler(boost::shared_ptr<IrcConnectorInterface> ircConnection);
   ~HighlightHandler();
 
   void consume(std::string const match) override;

@@ -8,20 +8,20 @@
 namespace ircbot
 {
 
-class IrcConnector;
+class IrcConnectorInterface;
 
 // not pure virtual becuase Boost::Python needs implemented base class to be wrapped28
 class Operation
 {
  public:
-  boost::shared_ptr<IrcConnector> ircConnection_; // ATTN: public cuz boost::pyton needs to reference it
+  boost::shared_ptr<IrcConnectorInterface> ircConnection_; // ATTN: public cuz boost::pyton needs to reference it
   
   Operation()
   {
     ASSERT(false, "Can't implement base Operation class;");
   }
 
-  Operation(boost::shared_ptr<IrcConnector> ircConnection)
+  Operation(boost::shared_ptr<IrcConnectorInterface> ircConnection)
       :     ircConnection_(ircConnection)
   {
   }  

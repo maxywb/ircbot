@@ -10,7 +10,7 @@
 
 namespace ircbot
 {
-PythonOperation::PythonOperation(boost::shared_ptr<IrcConnector> ircConnection)
+PythonOperation::PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection)
     : Operation(ircConnection)
 {
   // empty
@@ -22,12 +22,12 @@ void PythonOperation::consume(std::string const line)
   override(line);
 }
 
-void PythonOperation::setConnector(boost::shared_ptr<IrcConnector> ircConnection)
+void PythonOperation::setConnector(boost::shared_ptr<IrcConnectorInterface> ircConnection)
 {
   ircConnection_ = ircConnection;
 }
 
-boost::shared_ptr<IrcConnector> PythonOperation::getConnector()
+boost::shared_ptr<IrcConnectorInterface> PythonOperation::getConnector()
 {
   return ircConnection_;
 }

@@ -11,14 +11,14 @@ namespace ircbot
 {
 
 class Operation;
-class IrcConnector;
+class IrcConnectorInterface;
 
 class OperationManager
 {
  private:
   std::forward_list<boost::shared_ptr<Operation> > operations_;
 
-  boost::shared_ptr<IrcConnector> ircConnection_;
+  boost::shared_ptr<IrcConnectorInterface> ircConnection_;
 
   std::atomic<bool> running_;
 
@@ -26,12 +26,13 @@ class OperationManager
 
   OperationManager(){};
   void run();
-
+  void step();
  public:
 
-  explicit OperationManager(boost::shared_ptr<IrcConnector> ircConnection);
+  explicit OperationManager(boost::shared_ptr<IrcConnectorInterface> ircConnection);
 
   void start();
+
   void stop();
 
   void join();

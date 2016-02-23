@@ -7,7 +7,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
-#include "IrcConnector.hpp"
+#include "IrcConnectorInterface.hpp"
 #include "Operation.hpp"
 #include "OperationManager.hpp"
 
@@ -15,7 +15,7 @@ namespace ircbot
 {
 
 
-OperationManager::OperationManager(boost::shared_ptr<IrcConnector> ircConnection)
+OperationManager::OperationManager(boost::shared_ptr<IrcConnectorInterface> ircConnection)
     : running_(true),
       ircConnection_(ircConnection)
 {
@@ -35,25 +35,30 @@ void OperationManager::stop()
   running_ = false;
 }
 
+void OperationManager::step()
+{
+  std::string buf = ircConnection_->read();
+  std::vector<std::string> lines;
+  boost::split(lines, buf, boost::is_any_of("\n"));
+
+  for (auto operation : operations_) {
+    for (auto line : lines) {
+
+      if (line.size() == 0) {
+        continue;
+      }
+
+      operation->consume(line);
+    }
+  }
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
 void OperationManager::run()
 {
   while (running_) {
-    std::string buf = ircConnection_->read();
-    std::vector<std::string> lines;
-    boost::split(lines, buf, boost::is_any_of("\n"));
-
-    for (auto operation : operations_) {
-      for (auto line : lines) {
-
-        if (line.size() == 0) {
-          continue;
-        }
-
-        operation->consume(line);
-      }
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    step();
   }
 }
 

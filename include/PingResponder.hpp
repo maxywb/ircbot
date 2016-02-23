@@ -8,14 +8,14 @@
 namespace ircbot
 {
 
-class IrcConnector;
+class IrcConnectorInterface;
 
 class PingResponder : public Operation
 {
  private:
   PingResponder();
  public:
-  PingResponder(boost::shared_ptr<IrcConnector> ircConnection);
+  PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection);
   ~PingResponder();
 
   void consume(std::string const match) override;
