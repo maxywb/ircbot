@@ -20,7 +20,7 @@ float Parent::get_value()
   return value;
 }
 
-std::string Parent::foo()
+std::string Parent::foo(int n)
 {
   return "Parent " +  name;
 }
@@ -31,17 +31,17 @@ ParentWrapper::ParentWrapper(std::string name)
   // empty
 }
 
-std::string ParentWrapper::foo()
+std::string ParentWrapper::foo(int n)
 {
   if (boost::python::override overridedFoo = this->get_override("foo")) {
-    return overridedFoo();
+    return overridedFoo(n);
   }
-  return Parent::foo();
+  return Parent::foo(n);
 }
 
-std::string ParentWrapper::default_foo()
+std::string ParentWrapper::default_foo(int n)
 {
-  return this->Parent::foo();
+  return this->Parent::foo(n);
 }
 
 Child::Child(std::string name)
@@ -50,7 +50,7 @@ Child::Child(std::string name)
   // empty
 }
 
-std::string Child::foo()
+std::string Child::foo(int n)
 {
   return "Child " +  name;
 }

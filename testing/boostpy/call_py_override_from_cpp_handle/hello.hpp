@@ -16,7 +16,7 @@ class Parent
 
   std::string const name;
 
-  virtual std::string foo();
+  virtual std::string foo(int n);
 
  private:  
   float value;
@@ -31,9 +31,9 @@ class ParentWrapper : public Parent, public boost::python::wrapper<Parent>
 
   ParentWrapper(std::string name);
 
-  std::string foo() override;
+  std::string foo(int n) override;
 
-  std::string default_foo();
+  std::string default_foo(int n);
 };
 
 class Child : public Parent
@@ -43,7 +43,7 @@ class Child : public Parent
 
   Child(std::string name);
 
-  virtual std::string foo() override;
+  virtual std::string foo(int n) override;
   
 };
 

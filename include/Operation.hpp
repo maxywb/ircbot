@@ -13,10 +13,9 @@ class IrcConnector;
 // not pure virtual becuase Boost::Python needs implemented base class to be wrapped28
 class Operation
 {
- protected:
-  boost::shared_ptr<IrcConnector> ircConnection_;
-  
  public:
+  boost::shared_ptr<IrcConnector> ircConnection_; // ATTN: public cuz boost::pyton needs to reference it
+  
   Operation()
   {
     ASSERT(false, "Can't implement base Operation class;");

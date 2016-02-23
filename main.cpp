@@ -7,10 +7,11 @@
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "IrcConnector.hpp"
 #include "HighlightHandler.hpp"
-#include "PingResponder.hpp"
+#include "IrcConnector.hpp"
 #include "OperationManager.hpp"
+#include "PingResponder.hpp"
+#include "PythonOperation.hpp"
 
 std::atomic<bool> running_s(true);
 
@@ -22,22 +23,7 @@ void signal_handler(int /*signal*/)
 int main(void) {
   
   Py_Initialize();
-  try {
-  boost::python::object mainModule = boost::python::import("__main__");
-  boost::python::object mainNamespace = mainModule.attr("__dict__");
 
-  boost::python::object derivedModule = boost::python::import("derived.pyircbot");
-
-#if 0
-  boost::python::object ignored = boost::python::exec("import python \n"
-                                                      "h = python.HelloResponder \n",
-                                                      mainNamespace);
-#endif
-  } catch (boost::python::error_already_set const &) {
-    PyErr_Print();
-  }
-
-  return 0;
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
@@ -56,24 +42,46 @@ int main(void) {
 
   ircbot::OperationManager operationManager(connector);
 
-  operationManager.addOperation(pingResponder);
-  operationManager.addOperation(highlightHandler);
 
-  operationManager.start();
+  try {
+    boost::python::object mainModule = boost::python::import("__main__");
+    boost::python::object mainNamespace = mainModule.attr("__dict__");
 
-  connector->connect(server, port);
-  connector->user(nick);
-  connector->nick(nick);
+    boost::python::object derivedModule = boost::python::import("derived.pyircbot");
 
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+    mainNamespace["irc_connector"] = connector;
 
-  connector->join("#boatz");
 
-  while (running_s) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    boost::python::object ignored = boost::python::exec("import python \n"
+                                                        "h = python.HelloResponder(irc_connector) \n",
+                                                        mainNamespace);
+    
+    boost::shared_ptr<ircbot::PythonOperation> helloHandler =
+        boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
+
+    operationManager.addOperation(helloHandler);
+    operationManager.addOperation(pingResponder);
+    operationManager.addOperation(highlightHandler);
+
+
+    operationManager.start();
+
+    connector->connect(server, port);
+    connector->user(nick);
+    connector->nick(nick);
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    connector->join("#boatz");
+
+    while (running_s) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    operationManager.stop();
+    operationManager.join();
+  } catch (boost::python::error_already_set const &) {
+    PyErr_Print();
   }
-
-  operationManager.stop();
-  operationManager.join();
 
 }

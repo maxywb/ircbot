@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
 
     hello::Parent & pyChild = boost::python::extract<hello::Parent&>(main_namespace["py_child"]);
 
-    std::cout << pyChild.foo() << std::endl;
+    std::cout << pyChild.foo(12) << std::endl;
 
   } catch (boost::python::error_already_set const &) {
     PyErr_Print();

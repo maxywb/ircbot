@@ -23,7 +23,8 @@ BOOST_PYTHON_MODULE(pyircbot)
   boost::python::class_<PythonOperation,
                         boost::noncopyable>("PythonOperation",
                                             boost::python::init<boost::shared_ptr<IrcConnector>>())
-      .def("consume", boost::python::pure_virtual(&Operation::consume));
+      .def("consume", boost::python::pure_virtual(&Operation::consume))
+      .def_readwrite("_irc_connection", &Operation::ircConnection_);
 
 }
 }

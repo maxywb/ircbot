@@ -2,7 +2,7 @@
 import derived.hello
 
 class PyChild(derived.hello.Parent):
-    def foo(self):
+    def foo(self, n):
         return "PyChild %s" % self.name
 
 class PyChildBase(derived.hello.Parent):
@@ -19,9 +19,9 @@ def test():
     py_child.value = 42
     py_child_base.value = 99
 
-    print parent.foo()
-    print child.foo()
-    print py_child.foo()
-    print py_child_base.foo()
+    print parent.foo(2)
+    print child.foo(4)
+    print py_child.foo(22)
+    print py_child_base.foo(9)
 
 
