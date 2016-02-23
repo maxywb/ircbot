@@ -18,10 +18,11 @@ SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/s
 
 HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp 
 
-IRCBOT_LD_FLAGS = -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lPythonOperation -lpyircbot
+IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lPythonOperation 
+IRCBOT_LD_FLAGS = $(IRCBOT_LD_FLAGS_NO_PYTHON) -lpyircbot
 
 INCLUDES = -I/usr/include -I$(BASE)/include $(PYTHON_INCLUDE_FLAGS) $(BOOST_INCLUDE_FLAGS)
-LINKS = $(BOOST_LD_FLAGS) $(PYTHON_LD_FLAGS) -L$(DERIVED) $(IRCBOT_LD_FLAGS) -lpthread 
+LINKS = $(BOOST_LD_FLAGS) $(PYTHON_LD_FLAGS) $(IRCBOT_LD_FLAGS) -lpthread 
 
 DEBUGFLAGS = -g -DDEBUG
 NDEBUGFLAGS = -O3 -DNDEBUG
@@ -41,7 +42,7 @@ $(DEPEND): $(SRC_FILES) # ATTN: doesn't properly depend on $(DERIVED)
 python_so: $(DERIVED)/libpyircbot.so so
 
 $(DERIVED)/libpyircbot.so: $(DERIVED)/pyircbot.o
-	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@ 
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic -o $@ $< $(INCLUDES) $(IRCBOT_LD_FLAGS_NO_PYTHON)
 	@ln -f $@ $(DERIVED)/pyircbot.so
 
 $(DERIVED)/pyircbot.o: $(BASE)/src/PythonModule.cpp 
