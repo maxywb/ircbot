@@ -1,7 +1,9 @@
 #include <atomic>
-#include <string>
 #include <chrono>
+#include <fstream>
 #include <signal.h>
+#include <sstream>
+#include <string>
 
 #include <boost/make_shared.hpp>
 #include <boost/python.hpp>
@@ -32,13 +34,13 @@ int main(void) {
   size_t const port = 7000;
 
   boost::shared_ptr<ircbot::IrcConnector> connector =
-      boost::make_shared<ircbot::IrcConnector>();
+    boost::make_shared<ircbot::IrcConnector>();
 
   boost::shared_ptr<ircbot::PingResponder> pingResponder =
-      boost::make_shared<ircbot::PingResponder>(connector);
+    boost::make_shared<ircbot::PingResponder>(connector);
 
   boost::shared_ptr<ircbot::HighlightHandler> highlightHandler =
-      boost::make_shared<ircbot::HighlightHandler>(connector);
+    boost::make_shared<ircbot::HighlightHandler>(connector);
 
   ircbot::OperationManager operationManager(connector);
 
@@ -57,7 +59,7 @@ int main(void) {
                                                         mainNamespace);
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
-        boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
+      boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
 
     operationManager.addOperation(helloHandler);
     operationManager.addOperation(pingResponder);
@@ -74,9 +76,13 @@ int main(void) {
 
     connector->join("#boatz");
     connector->join("#lifting");
-    //connector->join("#diy");
-    //connector->join("#/g/sicp");
-    //connector->join("#etc");
+    connector->join("#/hoc/");
+
+    std::ifstream password_file("/home/meatwad/.ircbot.password");
+    std::stringstream password_buffer;
+    password_buffer << password_file.rdbuf();
+
+    connector->privmsg("nickserv", "identify " + password_buffer.str());
 
     while (running_s) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
