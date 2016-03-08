@@ -74,9 +74,9 @@ int main(void) {
 
     connector->join("#boatz");
     connector->join("#lifting");
-    connector->join("#diy");
-    connector->join("#/g/sicp");
-    connector->join("#etc");
+    //connector->join("#diy");
+    //connector->join("#/g/sicp");
+    //connector->join("#etc");
 
     while (running_s) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
