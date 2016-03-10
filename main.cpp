@@ -1,6 +1,7 @@
 #include <atomic>
 #include <chrono>
 #include <fstream>
+#include <list>
 #include <signal.h>
 #include <sstream>
 #include <string>
@@ -9,6 +10,7 @@
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "CommandHandler.hpp"
 #include "HighlightHandler.hpp"
 #include "IrcConnector.hpp"
 #include "OperationManager.hpp"
@@ -29,21 +31,23 @@ int main(void) {
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  std::string const nick = "boatz";
+  std::string const nick = "boatzzzz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
   boost::shared_ptr<ircbot::IrcConnector> connector =
-    boost::make_shared<ircbot::IrcConnector>();
+      boost::make_shared<ircbot::IrcConnector>();
 
-  boost::shared_ptr<ircbot::PingResponder> pingResponder =
-    boost::make_shared<ircbot::PingResponder>(connector);
+  boost::shared_ptr<ircbot::OperationManager> operationManager =
+      boost::make_shared<ircbot::OperationManager>(connector);
 
-  boost::shared_ptr<ircbot::HighlightHandler> highlightHandler =
-    boost::make_shared<ircbot::HighlightHandler>(connector);
+  operationManager->addOperation(
+      boost::make_shared<ircbot::Operation>(
+          ircbot::CommandHandler(connector, operationManager)));
 
-  ircbot::OperationManager operationManager(connector);
-
+  operationManager->addOperation(
+      boost::make_shared<ircbot::Operation>(
+          ircbot::PingResponder(connector)));
 
   try {
     boost::python::object mainModule = boost::python::import("__main__");
@@ -55,43 +59,45 @@ int main(void) {
 
 
     boost::python::object ignored = boost::python::exec("import python \n"
+                                                        "sql_recorder = python.SqlRecorder(irc_connector) \n"
                                                         "h = python.HelloResponder(irc_connector) \n",
                                                         mainNamespace);
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
-      boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
+        boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
+    operationManager->addOperation(helloHandler);
 
-    operationManager.addOperation(helloHandler);
-    operationManager.addOperation(pingResponder);
-    operationManager.addOperation(highlightHandler);
+    boost::shared_ptr<ircbot::PythonOperation> sqlRecorder =
+        boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["sql_recorder"]);
+    operationManager->addOperation(sqlRecorder);
 
-
-    operationManager.start();
-
-    connector->connect(server, port);
-    connector->user(nick);
-    connector->nick(nick);
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    connector->join("#boatz");
-    connector->join("#lifting");
-    connector->join("#/hoc/");
-
-    std::ifstream password_file("/home/meatwad/.ircbot.password");
-    std::stringstream password_buffer;
-    password_buffer << password_file.rdbuf();
-
-    connector->privmsg("nickserv", "identify " + password_buffer.str());
-
-    while (running_s) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    operationManager.stop();
-    operationManager.join();
   } catch (boost::python::error_already_set const &) {
     PyErr_Print();
   }
+
+  operationManager->start();
+
+  connector->connect(server, port);
+  connector->user(nick);
+  connector->nick(nick);
+
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+
+  connector->join("#boatz");
+  //connector->join("#lifting");
+  //connector->join("#/hoc/");
+
+  std::ifstream password_file("/home/meatwad/.ircbot.password");
+  std::stringstream password_buffer;
+  password_buffer << password_file.rdbuf();
+
+  connector->privmsg("nickserv", "identify " + password_buffer.str());
+
+  while (running_s) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+
+  operationManager->stop();
+  operationManager->join();
 
 }

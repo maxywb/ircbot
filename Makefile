@@ -14,11 +14,11 @@ BOOST_LIB = /usr/lib/
 BOOST_LD_FLAGS = -L$(BOOST_LIB) -lboost_python
 BOOST_INCLUDE_FLAGS = -I$(BOOST_INC)
 
-SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp $(BASE)/src/PythonModule.cpp
+SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp $(BASE)/src/CommandHandler.cpp $(BASE)/src/PythonModule.cpp
 
-HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnectorInterface.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp 
+HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnectorInterface.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp $(BASE)/include/CommandHandler.hpp 
 
-IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lPythonOperation 
+IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lCommandHandler -lPythonOperation 
 IRCBOT_LD_FLAGS = $(IRCBOT_LD_FLAGS_NO_PYTHON) -lpyircbot
 
 INCLUDES = -I/usr/include -I$(BASE)/include $(PYTHON_INCLUDE_FLAGS) $(BOOST_INCLUDE_FLAGS)
@@ -26,7 +26,7 @@ LINKS = $(BOOST_LD_FLAGS) $(PYTHON_LD_FLAGS) $(IRCBOT_LD_FLAGS) -lpthread
 
 DEBUGFLAGS = -g3 -DDEBUG
 
-CXX_FLAGS = -std=c++11 -O3
+CXX_FLAGS = -std=c++11 #-O3
 
 DEPEND = $(DERIVED)/depend.mk
 
@@ -50,7 +50,7 @@ $(DERIVED)/libpyircbot.so: $(DERIVED)/pyircbot.o so
 $(DERIVED)/pyircbot.o: $(BASE)/src/PythonModule.cpp 
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
 
-so: $(DEPEND) $(DERIVED) $(DERIVED)/libIrcConnector.so $(DERIVED)/libPingResponder.so $(DERIVED)/libOperationManager.so $(DERIVED)/libHighlightHandler.so $(DERIVED)/libPythonOperation.so
+so: $(DEPEND) $(DERIVED) $(DERIVED)/libIrcConnector.so $(DERIVED)/libPingResponder.so $(DERIVED)/libOperationManager.so $(DERIVED)/libHighlightHandler.so $(DERIVED)/libCommandHandler.so $(DERIVED)/libPythonOperation.so
 
 $(DERIVED)/libIrcConnector.so: $(DERIVED)/IrcConnector.o
 	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
@@ -74,6 +74,12 @@ $(DERIVED)/libHighlightHandler.so: $(DERIVED)/HighlightHandler.o
 	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
 
 $(DERIVED)/HighlightHandler.o: $(BASE)/src/HighlightHandler.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+$(DERIVED)/libCommandHandler.so: $(DERIVED)/CommandHandler.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
+
+$(DERIVED)/CommandHandler.o: $(BASE)/src/CommandHandler.cpp
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
 
 $(DERIVED)/libPythonOperation.so: $(DERIVED)/PythonOperation.o 
