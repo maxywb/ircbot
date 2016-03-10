@@ -14,6 +14,28 @@ RESPONSE = {
     "!eth":None,
 }
 
+POSITIVE_ADJ = [
+    "wonderful",
+    "amazing",
+    "jaw-dropping",
+    "sickening",
+    "astounding",
+    "great",
+    "excellent",
+    "top tier",
+    "elite"
+]
+
+ENDING_ADJ = [
+    "so proud of you",
+    "very happy for you",
+    "envious of you",
+    "gonna make it brah",
+    "plebs in your presence",
+    "peons compared to you",
+    "jealous of dem financial gains"
+]
+
 class HelloResponder(derived.pyircbot.PythonOperation):
     def __init__(self, irc_connector):
         super(HelloResponder, self).__init__(irc_connector)
@@ -39,7 +61,9 @@ class HelloResponder(derived.pyircbot.PythonOperation):
                 self._irc_connection.privmsg(where, response)
 
             if command == "!eth" and "Angelina" in who[1]:
-                self._irc_connection.privmsg(where, "excellent investing bp, we're all proud of you!")
+                start = POSITIVE_ADJ[random.randrange(len(POSITIVE_ADJ))]
+                end = ENDING_ADJ[random.randrange(len(ENDING_ADJ))]
+                self._irc_connection.privmsg(where, "{0} investing bp, we're all {1}!".format(start, end))
 
         except Exception as e:
             print e
