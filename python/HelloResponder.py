@@ -1,3 +1,4 @@
+import random
 import derived.pyircbot
 
 from .util import split_privmsg
@@ -64,7 +65,7 @@ class HelloResponder(derived.pyircbot.PythonOperation):
             if command == "!eth" and "Angelina" in who[1]:
                 start = POSITIVE_ADJ[random.randrange(len(POSITIVE_ADJ))]
                 end = ENDING_ADJ[random.randrange(len(ENDING_ADJ))]
-                self._irc_connection.privmsg(where, "{0} investing bp, we're all {1}!".format(start, end))
+                self._irc_connection.privmsg(where, "%s investing %s, we're all %s!" % (start, who[0], end))
 
         except Exception as e:
             print e
