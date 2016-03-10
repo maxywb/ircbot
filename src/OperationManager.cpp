@@ -48,7 +48,7 @@ void OperationManager::step()
         continue;
       }
 
-      operation->consume(line);
+      operation.second->consume(line);
     }
   }
 
@@ -67,9 +67,18 @@ void OperationManager::join()
   worker_.join();
 }
 
-void OperationManager::addOperation(boost::shared_ptr<Operation> operation)
+void OperationManager::addOperation(std::string const name,
+                                    boost::shared_ptr<Operation> operation)
 {
-  operations_.push_front(operation);
+  operations_[name] = operation;
+}
+
+bool OperationManager::hasOperation(std::string const & name){
+  return false;
+}
+
+void OperationManager::removeOperation(std::string const & name){
+  return;
 }
 
 }

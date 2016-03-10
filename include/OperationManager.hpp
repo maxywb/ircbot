@@ -2,7 +2,7 @@
 #define IRCBOT_OPERATIONMANAGER_HPP
 
 #include <atomic>
-#include <forward_list>
+#include <map>
 #include <thread>
 
 #include <boost/shared_ptr.hpp>
@@ -16,7 +16,7 @@ class IrcConnectorInterface;
 class OperationManager
 {
  private:
-  std::forward_list<boost::shared_ptr<Operation> > operations_;
+  std::map<std::string, boost::shared_ptr<Operation> > operations_;
 
   boost::shared_ptr<IrcConnectorInterface> ircConnection_;
 
@@ -37,7 +37,10 @@ class OperationManager
 
   void join();
 
-  void addOperation(boost::shared_ptr<Operation> operation);
+  void addOperation(std::string const name,
+                    boost::shared_ptr<Operation> operation);
+  bool hasOperation(std::string const & name);
+  void removeOperation(std::string const & name);
 
 };
 

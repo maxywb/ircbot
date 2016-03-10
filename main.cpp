@@ -42,10 +42,12 @@ int main(void) {
       boost::make_shared<ircbot::OperationManager>(connector);
 
   operationManager->addOperation(
+      "CommandHandler",
       boost::make_shared<ircbot::CommandHandler>(
           ircbot::CommandHandler(connector, operationManager)));
 
   operationManager->addOperation(
+      "PingResponder",
       boost::make_shared<ircbot::PingResponder>(
           ircbot::PingResponder(connector)));
 
@@ -65,11 +67,15 @@ int main(void) {
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
         boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["h"]);
-    operationManager->addOperation(helloHandler);
+    operationManager->addOperation(
+        "HelloHandler",
+        helloHandler);
 
     boost::shared_ptr<ircbot::PythonOperation> sqlRecorder =
         boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["sql_recorder"]);
-    operationManager->addOperation(sqlRecorder);
+    operationManager->addOperation(
+        "SqlRecorder",
+        sqlRecorder);
 
   } catch (boost::python::error_already_set const &) {
     PyErr_Print();

@@ -12,6 +12,7 @@ RESPONSE = {
     "nice":"nice",
     "bye":"pce",
     "!eth":None,
+    "asdf" : "lol"
 }
 
 POSITIVE_ADJ = [

@@ -2,12 +2,16 @@
 #include <sstream>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "assert.hpp"
 #include "IrcConnector.hpp"
 #include "CommandHandler.hpp"
+#include "Operation.hpp"
+#include "OperationManager.hpp"
+#include "PythonOperation.hpp"
 
 namespace ircbot
 {
@@ -27,6 +31,10 @@ CommandHandler::~CommandHandler()
 
 void CommandHandler::consume(std::string const line)
 {
+
+  return; //ATTN doesn't do anything
+
+  
   std::vector<std::string> strs;
   boost::split(strs, line, boost::is_any_of(" \n\r\t"));
 
@@ -53,41 +61,7 @@ void CommandHandler::consume(std::string const line)
     return;
   }
 
-  if (command == "reload" ) {
-    if (strs.size() < 6) {
-      return;
-    }
 
-    for (auto i : strs) {
-      std::cout << "^ " << i << std::endl;
-    }
-
-    std::string const & module = strs[5];
-
-    std::stringstream reload_command;
-    reload_command << module << " = reload("  << module << ") \n";
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << "# " << reload_command.str().c_str() << " #" << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    try {
-      boost::python::object mainModule = boost::python::import("__main__");
-      boost::python::object mainNamespace = mainModule.attr("__dict__");
-
-      boost::python::object ignored = boost::python::exec(reload_command.str().c_str(),
-                                                          mainNamespace);
-    
-    } catch (boost::python::error_already_set const &) {
-      ircConnection_->privmsg(dest, "checkyour logs, bro. something bad happened.");    
-        
-      PyErr_Print();
-      return;
-    }
-
-  }
 
   ircConnection_->privmsg(dest, "done.");
 }
