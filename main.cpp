@@ -31,7 +31,7 @@ int main(void) {
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  std::string const nick = "boatzzzz";
+  std::string const nick = "boatzzz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
@@ -42,11 +42,11 @@ int main(void) {
       boost::make_shared<ircbot::OperationManager>(connector);
 
   operationManager->addOperation(
-      boost::make_shared<ircbot::Operation>(
+      boost::make_shared<ircbot::CommandHandler>(
           ircbot::CommandHandler(connector, operationManager)));
 
   operationManager->addOperation(
-      boost::make_shared<ircbot::Operation>(
+      boost::make_shared<ircbot::PingResponder>(
           ircbot::PingResponder(connector)));
 
   try {

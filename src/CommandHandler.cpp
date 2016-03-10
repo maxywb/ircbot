@@ -47,8 +47,8 @@ void CommandHandler::consume(std::string const line)
 
   if (!(type == "PRIVMSG"
         && dest[0] == '#'
-        && (target == ":boatz"
-            || target == ":boatz:")
+        && (target == ":boatzzz"
+            || target == ":boatzzz:")
         )) {
     return;
   }
@@ -81,7 +81,7 @@ void CommandHandler::consume(std::string const line)
                                                           mainNamespace);
     
     } catch (boost::python::error_already_set const &) {
-      ircConnection_->privmsg(dest, "check your logs, bro. something bad happened.");    
+      ircConnection_->privmsg(dest, "checkyour logs, bro. something bad happened.");    
         
       PyErr_Print();
       return;
