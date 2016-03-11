@@ -65,7 +65,7 @@ class HelloResponder(derived.pyircbot.PythonOperation):
             if response is not None:
                 self._irc_connection.privmsg(where, response)
 
-            if command == "!eth" and "Angelina" in who[1]:
+            if command == "!eth" in who[1]:
                 start = POSITIVE_ADJ[random.randrange(len(POSITIVE_ADJ))]
                 end = ENDING_ADJ[random.randrange(len(ENDING_ADJ))]
                 self._irc_connection.privmsg(where, "%s investing %s, we're all %s!" % (start, who[0], end))
