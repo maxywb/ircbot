@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#ifndef NDEBUG
+#ifndef NO_PRINT
 #  define ASSERT(condition, message)					\
   do {									\
     if (! (condition)) {                                                \
@@ -18,7 +18,7 @@
 #  define ASSERT(condition, message) do { } while (false)
 #endif
 
-#ifndef NDEBUG
+#ifndef NO_PRINT
 #  define PRINT(message)                       \
   std::cout << message << std::endl;
 
@@ -26,7 +26,7 @@
 #  define PRINT(message) do { } while (false)
 #endif
 
-#ifndef NDEBUG
+#ifndef NO_PRINT
 #  define ERROR(message)                       \
   std::cerr << message << std::endl;
 #else

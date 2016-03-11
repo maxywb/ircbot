@@ -41,13 +41,13 @@ void OperationManager::step()
   std::vector<std::string> lines;
   boost::split(lines, buf, boost::is_any_of("\n"));
 
-  for (auto operation : operations_) {
-    for (auto line : lines) {
 
-      if (line.size() == 0) {
-        continue;
-      }
+  for (auto line : lines) {
+    if (line.size() == 0) {
+      continue;
+    }
 
+    for (auto operation : operations_) {
       operation.second->consume(line);
     }
   }

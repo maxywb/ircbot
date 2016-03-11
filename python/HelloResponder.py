@@ -44,7 +44,10 @@ class HelloResponder(derived.pyircbot.PythonOperation):
 
     def consume(self, line):
         try:
-            who, what, where, message = split_privmsg(line)
+            try:
+                who, what, where, message = split_privmsg(line)
+            except IndexError:
+                return
 
             if len(message) <=0:
                 return
