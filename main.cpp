@@ -31,7 +31,7 @@ int main(void) {
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  std::string const nick = "boatzzz";
+  std::string const nick = "boatz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
@@ -90,8 +90,8 @@ int main(void) {
   std::this_thread::sleep_for(std::chrono::seconds(5));
 
   connector->join("#boatz");
-  //connector->join("#lifting");
-  //connector->join("#/hoc/");
+  connector->join("#lifting");
+  connector->join("#/hoc/");
 
   std::ifstream password_file("/home/meatwad/.ircbot.password");
   std::stringstream password_buffer;
