@@ -20,10 +20,18 @@
 
 #ifndef NO_PRINT
 #  define PRINT(message)                       \
-  std::cout << message << std::endl;
+  std::cout << message;
 
 #else
 #  define PRINT(message) do { } while (false)
+#endif
+
+#ifndef NO_PRINT
+#  define PRINTLN(message)                       \
+  std::cout << message << std::endl;
+
+#else
+#  define PRINTLN(message) do { } while (false)
 #endif
 
 #ifndef NO_PRINT

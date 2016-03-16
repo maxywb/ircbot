@@ -1,7 +1,11 @@
+import sys
 import random
 import derived.pyircbot
 
-from .util import split_privmsg
+from .util import (
+    split_privmsg,
+    IGNORE_USERS,
+)
 
 RESPONSE = {
     "nice":"nice",
@@ -52,6 +56,9 @@ class HelloResponder(derived.pyircbot.PythonOperation):
             if len(message) <=0:
                 return
 
+            if who[0] in IGNORE_USERS:
+                return
+
             command = message[0].lower()
 
             if len(message) != 1:
@@ -59,7 +66,7 @@ class HelloResponder(derived.pyircbot.PythonOperation):
 
             try:
                 response = RESPONSE[command]
-            except IndexError:
+            except KeyError:
                 return
 
             if response is not None:
@@ -71,4 +78,5 @@ class HelloResponder(derived.pyircbot.PythonOperation):
                 self._irc_connection.privmsg(where, "%s investing %s, we're all %s!" % (start, who[0], end))
 
         except Exception as e:
-            print e
+            print "HelloResponder exception:", type(e), e
+

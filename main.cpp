@@ -77,9 +77,6 @@ int main(void) {
         "SqlRecorder",
         sqlRecorder);
 
-  } catch (boost::python::error_already_set const &) {
-    PyErr_Print();
-  }
 
   operationManager->start();
 
@@ -105,5 +102,9 @@ int main(void) {
 
   operationManager->stop();
   operationManager->join();
+
+  } catch (boost::python::error_already_set const &) {
+    PyErr_Print();
+  }
 
 }

@@ -23,7 +23,7 @@ IrcConnector::IrcConnector()
   socket_ = socket(AF_INET, SOCK_STREAM, 0);
 
   ASSERT(socket_ > 0, "failed to open socket"); 
-  PRINT("opened socket");
+  PRINTLN("opened socket");
 
 #if 0
   // set 100 millisecond timeout
@@ -36,7 +36,7 @@ IrcConnector::IrcConnector()
              (char *)&tv,
              sizeof(struct timeval));
 
-  PRINT("set 1 second timeout on socket");
+  PRINTLN("set 1 second timeout on socket");
 #endif
 }
 
@@ -67,7 +67,7 @@ bool IrcConnector::write(std::string const & text)
 {
   LOCK_SOCKET_FOR_WRITE;
 
-  PRINT("writing: " << text);
+  PRINTLN("writing: " << text);
 
   std::string const message = text + "\n";
 
@@ -90,7 +90,7 @@ void IrcConnector::connect(std::string const address, size_t const port)
   // look up server
   struct hostent *server = gethostbyname(address.c_str());
   ASSERT(server, "no such host " << address);
-  PRINT("found host " << address);
+  PRINTLN("found host " << address);
 
   // connect to server
   struct sockaddr_in serv_addr;
@@ -112,7 +112,7 @@ void IrcConnector::connect(std::string const address, size_t const port)
 
   fcntl(socket_, F_SETFL, O_NONBLOCK);
 
-  PRINT("connected to " << address << ":" << port);
+  PRINTLN("connected to " << address << ":" << port);
 }
 
 void IrcConnector::join(std::string const & channel)
@@ -176,7 +176,7 @@ void IrcConnector::quit()
   if (connected()) {
     std::string const message = "QUIT cya";
     write(message);
-    PRINT("closed connection");
+    PRINTLN("closed connection");
   } else {
     ERROR("can't quit, socket is closed");
   }
