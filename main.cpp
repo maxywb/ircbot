@@ -32,7 +32,7 @@ int main(void) {
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  std::string const nick = "boatzzz";
+  std::string const nick = "boatz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
@@ -40,7 +40,7 @@ int main(void) {
       boost::make_shared<ircbot::IrcConnector>();
 
   boost::shared_ptr<ircbot::SqlConnector> sqlConnector =
-      boost::make_shared<ircbot::SqlConnector>("/home/meatwad/.ircbot_testing.db");
+      boost::make_shared<ircbot::SqlConnector>("/home/meatwad/.ircbot.db");
 
   boost::shared_ptr<ircbot::OperationManager> operationManager =
       boost::make_shared<ircbot::OperationManager>(connector);
@@ -81,9 +81,6 @@ int main(void) {
         "SqlRecorder",
         sqlRecorder);
 
-  } catch (boost::python::error_already_set const &) {
-    PyErr_Print();
-  }
 
   operationManager->start();
 
@@ -94,8 +91,8 @@ int main(void) {
   std::this_thread::sleep_for(std::chrono::seconds(5));
 
   connector->join("#boatz");
-  //connector->join("#lifting");
-  //connector->join("#/hoc/");
+  connector->join("#lifting");
+  connector->join("#/hoc/");
 
   std::ifstream password_file("/home/meatwad/.ircbot.password");
   std::stringstream password_buffer;
@@ -109,5 +106,9 @@ int main(void) {
 
   operationManager->stop();
   operationManager->join();
+
+  } catch (boost::python::error_already_set const &) {
+    PyErr_Print();
+  }
 
 }

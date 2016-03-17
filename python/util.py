@@ -1,4 +1,6 @@
-
+IGNORE_USERS = [
+    '_VIPPER_',
+]
 
 
 def split_privmsg(line):
