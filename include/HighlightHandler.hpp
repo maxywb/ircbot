@@ -12,13 +12,15 @@ namespace ircbot
 {
 
 class IrcConnectorInterface;
+class SqlConnector;
 
 class HighlightHandler : public Operation
 {
  private:
   HighlightHandler();
  public:
-  HighlightHandler(boost::shared_ptr<IrcConnectorInterface> ircConnection);
+  HighlightHandler(boost::shared_ptr<IrcConnectorInterface> ircConnection,
+                   boost::shared_ptr<SqlConnector> sqlConnector);
   ~HighlightHandler();
 
   void consume(std::string const match) override;

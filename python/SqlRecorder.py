@@ -5,18 +5,8 @@ import derived.pyircbot
 from .util import split_privmsg
 
 class SqlRecorder(derived.pyircbot.PythonOperation):
-    def __init__(self, irc_connector):
-        super(SqlRecorder, self).__init__(irc_connector)
-        
-        # ATTN: do something smarter about creating this in the consumer thread
-        self._db_connection = None
-        self._db_cursor = None
-
-        self._log_command = '''
-        insert into privmsg_log(id, channel, nick, hostname, message)
-        values(NULL, '%s', '%s', '%s', '%s');
-        '''
-
+    def __init__(self, irc_connector, sql_connector):
+        super(SqlRecorder, self).__init__(irc_connector, sql_connector)
         self._hostname_exempt_list = [
             "ctcp@ctcp-scanner.rizon.net",
         ]
@@ -37,12 +27,8 @@ class SqlRecorder(derived.pyircbot.PythonOperation):
             if who[1] in self._hostname_exempt_list:
                 return
 
-            if self._db_connection is None:
-                self._db_connection = sqlite3.connect("/home/meatwad/.ircbot.db", check_same_thread=False)
-                self._db_cursor = self._db_connection.cursor()
-
-            self._db_cursor.execute(self._log_command % (where, who[0], who[1], ' '.join(message)))
-            self._db_connection.commit()
+            print "log"
+            self._sql_connector.log_privmsg(where, who[0], who[1], ' '.join(message));
 
         except Exception as e:
             print e

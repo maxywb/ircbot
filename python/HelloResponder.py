@@ -39,8 +39,8 @@ ENDING_ADJ = [
 ]
 
 class HelloResponder(derived.pyircbot.PythonOperation):
-    def __init__(self, irc_connector):
-        super(HelloResponder, self).__init__(irc_connector)
+    def __init__(self, irc_connector, sql_connector):
+        super(HelloResponder, self).__init__(irc_connector, sql_connector)
 
     def consume(self, line):
         try:

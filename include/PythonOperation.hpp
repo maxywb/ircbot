@@ -19,7 +19,8 @@ class PythonOperation : public Operation, public boost::python::wrapper<Operatio
 {
  public:
   PythonOperation() = default;
-  PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection);
+  PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection,
+                  boost::shared_ptr<SqlConnector> sqlConnector);
 
   void consume(std::string const line) override;
 

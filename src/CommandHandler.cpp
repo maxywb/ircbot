@@ -12,13 +12,15 @@
 #include "Operation.hpp"
 #include "OperationManager.hpp"
 #include "PythonOperation.hpp"
+#include "SqlConnector.hpp"
 
 namespace ircbot
 {
 
 CommandHandler::CommandHandler(boost::shared_ptr<IrcConnector> ircConnection,
+                               boost::shared_ptr<SqlConnector> sqlConnector,
                                boost::shared_ptr<OperationManager> operationManager)
-    : Operation(ircConnection),
+    : Operation(ircConnection, sqlConnector),
       operationManager_(operationManager)
 {
   // empty

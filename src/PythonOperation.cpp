@@ -10,8 +10,9 @@
 
 namespace ircbot
 {
-PythonOperation::PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection)
-    : Operation(ircConnection)
+PythonOperation::PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection,
+                                 boost::shared_ptr<SqlConnector> sqlConnector)
+    : Operation(ircConnection, sqlConnector)
 {
   // empty
 }

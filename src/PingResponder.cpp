@@ -10,8 +10,9 @@
 namespace ircbot
 {
 
-PingResponder::PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection)
-    : Operation(ircConnection)
+PingResponder::PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection,
+                             boost::shared_ptr<SqlConnector> sqlConnector)
+    : Operation(ircConnection, sqlConnector)
 {
 
 

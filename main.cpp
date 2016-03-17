@@ -16,6 +16,7 @@
 #include "OperationManager.hpp"
 #include "PingResponder.hpp"
 #include "PythonOperation.hpp"
+#include "SqlConnector.hpp"
 
 std::atomic<bool> running_s(true);
 
@@ -31,12 +32,15 @@ int main(void) {
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  std::string const nick = "boatz";
+  std::string const nick = "boatzzz";
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
   boost::shared_ptr<ircbot::IrcConnector> connector =
       boost::make_shared<ircbot::IrcConnector>();
+
+  boost::shared_ptr<ircbot::SqlConnector> sqlConnector =
+      boost::make_shared<ircbot::SqlConnector>("/home/meatwad/.ircbot_testing.db");
 
   boost::shared_ptr<ircbot::OperationManager> operationManager =
       boost::make_shared<ircbot::OperationManager>(connector);
@@ -44,12 +48,12 @@ int main(void) {
   operationManager->addOperation(
       "CommandHandler",
       boost::make_shared<ircbot::CommandHandler>(
-          ircbot::CommandHandler(connector, operationManager)));
+          ircbot::CommandHandler(connector, sqlConnector, operationManager)));
 
   operationManager->addOperation(
       "PingResponder",
       boost::make_shared<ircbot::PingResponder>(
-          ircbot::PingResponder(connector)));
+          ircbot::PingResponder(connector, sqlConnector)));
 
   try {
     boost::python::object mainModule = boost::python::import("__main__");
@@ -58,11 +62,11 @@ int main(void) {
     boost::python::object derivedModule = boost::python::import("derived.pyircbot");
 
     mainNamespace["irc_connector"] = connector;
-
+    mainNamespace["sql_connector"] = sqlConnector;
 
     boost::python::object ignored = boost::python::exec("import python \n"
-                                                        "sql_recorder = python.SqlRecorder(irc_connector) \n"
-                                                        "h = python.HelloResponder(irc_connector) \n",
+                                                        "sql_recorder = python.SqlRecorder(irc_connector, sql_connector) \n"
+                                                        "h = python.HelloResponder(irc_connector, sql_connector) \n",
                                                         mainNamespace);
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
@@ -90,8 +94,8 @@ int main(void) {
   std::this_thread::sleep_for(std::chrono::seconds(5));
 
   connector->join("#boatz");
-  connector->join("#lifting");
-  connector->join("#/hoc/");
+  //connector->join("#lifting");
+  //connector->join("#/hoc/");
 
   std::ifstream password_file("/home/meatwad/.ircbot.password");
   std::stringstream password_buffer;

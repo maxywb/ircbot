@@ -9,13 +9,16 @@ namespace ircbot
 {
 
 class IrcConnectorInterface;
+class SqlConnector;
 
 class PingResponder : public Operation
 {
  private:
   PingResponder();
  public:
-  PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection);
+
+  PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection,
+                boost::shared_ptr<SqlConnector> sqlConnector);
   ~PingResponder();
 
   void consume(std::string const match) override;
