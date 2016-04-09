@@ -174,7 +174,7 @@ std::string IrcConnector::read()
 void IrcConnector::quit()
 {
   if (connected()) {
-    std::string const message = "QUIT cya";
+    std::string const message = "QUIT :sayonara nerds";
     write(message);
     PRINTLN("closed connection");
   } else {

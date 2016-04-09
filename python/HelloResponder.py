@@ -8,16 +8,12 @@ from .util import (
 )
 
 RESPONSE = {
-    "nice":"nice",
     "hi":"hi",
     "hello":"hi",
     "bonjour":"hi",
     "sup":"sup",
     "word":"no doubt",
-    "nice":"nice",
-    "bye":"pce",
-    "!eth":None,
-    "asdf" : "lol"
+    "!eth": None,
 }
 
 POSITIVE_ADJ = [
