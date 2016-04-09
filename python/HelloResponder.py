@@ -43,8 +43,8 @@ ENDING_ADJ = [
 ]
 
 class HelloResponder(derived.pyircbot.PythonOperation):
-    def __init__(self, irc_connector, sql_connector):
-        super(HelloResponder, self).__init__(irc_connector, sql_connector)
+    def __init__(self, irc_connector, sql_connector, config_manager):
+        super(HelloResponder, self).__init__(irc_connector, sql_connector, config_manager)
 
     def consume(self, line):
         try:
@@ -62,6 +62,9 @@ class HelloResponder(derived.pyircbot.PythonOperation):
             command = message[0].lower()
 
             if len(message) != 1:
+                return
+
+            if not self._config_manager.is_enabled("hello", where):
                 return
 
             try:

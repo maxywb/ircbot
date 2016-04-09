@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <unordered_set>
 
 #include <sqlite3.h> 
 
@@ -17,7 +19,7 @@ SqlConnector::~SqlConnector()
   sqlite3_close(db_);
 }
 
-void SqlConnector::log_privmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message)
+void SqlConnector::logPrivmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message)
 {
   sqlite3_stmt * log_privmsg_stmt_;
   sqlite3_prepare(db_,
@@ -54,5 +56,29 @@ void SqlConnector::log_privmsg(std::string const & where, std::string const & ni
   sqlite3_finalize(log_privmsg_stmt_);
 }
 
+std::unordered_set<std::string> SqlConnector::getChannels()
+{
+
+  std::string const get_channels("select * from channels;");
+  std::unordered_set<std::string> channels;
+
+  sqlite3_stmt * get_channels_stmt;
+  sqlite3_prepare(db_,
+                  get_channels.c_str(),
+                  get_channels.length(),
+                  &get_channels_stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(get_channels_stmt);
+  while(step == SQLITE_ROW){ 
+    channels.emplace(reinterpret_cast<char const*>(sqlite3_column_text(get_channels_stmt, 1)));
+
+    step = sqlite3_step(get_channels_stmt);
+  } 
+
+  sqlite3_finalize(get_channels_stmt);
+
+  return channels;
 }
 
+}

@@ -8,6 +8,7 @@
 namespace ircbot
 {
 
+class ConfigurationManager;
 class IrcConnectorInterface;
 class SqlConnector;
 
@@ -17,16 +18,19 @@ class Operation
  public:
   boost::shared_ptr<IrcConnectorInterface> ircConnection_; // ATTN: public cuz boost::pyton needs to reference it
   boost::shared_ptr<SqlConnector> sqlConnector_; // ATTN: public cuz boost::pyton needs to reference it
-  
+  boost::shared_ptr<ConfigurationManager> configManager_; // ATTN: public cuz boost::pyton needs to reference it
+
   Operation()
   {
     ASSERT(false, "Can't implement base Operation class;");
   }
 
   Operation(boost::shared_ptr<IrcConnectorInterface> ircConnection,
-            boost::shared_ptr<SqlConnector> sqlConnector)
+            boost::shared_ptr<SqlConnector> sqlConnector,
+            boost::shared_ptr<ConfigurationManager> configManager)
       :     ircConnection_(ircConnection),
-            sqlConnector_(sqlConnector)
+            sqlConnector_(sqlConnector),
+            configManager_(configManager)
   {
   }  
 

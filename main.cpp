@@ -37,14 +37,14 @@ int main(void) {
   std::string const server = "irc.rizon.net";
   size_t const port = 7000;
 
-  boost::shared_ptr<ircbot::IrcConnector> connector =
-      boost::make_shared<ircbot::IrcConnector>();
-
   boost::shared_ptr<ircbot::SqlConnector> sqlConnector =
       boost::make_shared<ircbot::SqlConnector>("/home/meatwad/.ircbot.db");
 
+  boost::shared_ptr<ircbot::IrcConnector> connector =
+      boost::make_shared<ircbot::IrcConnector>();
+
   boost::shared_ptr<ircbot::ConfigurationManager> configManager =
-      boost::make_shared<ircbot::ConfigurationManager>(sqlConnector);
+      boost::make_shared<ircbot::ConfigurationManager>(connector, sqlConnector);
 
   boost::shared_ptr<ircbot::OperationManager> operationManager =
       boost::make_shared<ircbot::OperationManager>(connector);
@@ -52,12 +52,12 @@ int main(void) {
   operationManager->addOperation(
       "CommandHandler",
       boost::make_shared<ircbot::CommandHandler>(
-          ircbot::CommandHandler(connector, sqlConnector, operationManager)));
+          ircbot::CommandHandler(connector, sqlConnector, configManager, operationManager)));
 
   operationManager->addOperation(
       "PingResponder",
       boost::make_shared<ircbot::PingResponder>(
-          ircbot::PingResponder(connector, sqlConnector)));
+          ircbot::PingResponder(connector, sqlConnector, configManager)));
 
   try {
     boost::python::object mainModule = boost::python::import("__main__");
@@ -70,8 +70,8 @@ int main(void) {
     mainNamespace["config_manager"] = configManager;
 
     boost::python::object ignored = boost::python::exec("import python \n"
-                                                        "sql_recorder = python.SqlRecorder(irc_connector, sql_connector) \n"
-                                                        "h = python.HelloResponder(irc_connector, sql_connector) \n",
+                                                        "sql_recorder = python.SqlRecorder(irc_connector, sql_connector, config_manager) \n"
+                                                        "h = python.HelloResponder(irc_connector, sql_connector, config_manager) \n",
                                                         mainNamespace);
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
@@ -95,7 +95,9 @@ int main(void) {
 
   std::this_thread::sleep_for(std::chrono::seconds(5));
 
-  connector->join("#boatz");
+  configManager->configureBot();
+
+  //connector->join("#boatz");
   //connector->join("#lifting");
   //connector->join("#/hoc/");
 

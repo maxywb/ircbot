@@ -19,8 +19,9 @@ namespace ircbot
 
 CommandHandler::CommandHandler(boost::shared_ptr<IrcConnector> ircConnection,
                                boost::shared_ptr<SqlConnector> sqlConnector,
+                               boost::shared_ptr<ConfigurationManager> configManager,
                                boost::shared_ptr<OperationManager> operationManager)
-    : Operation(ircConnection, sqlConnector),
+    : Operation(ircConnection, sqlConnector, configManager),
       operationManager_(operationManager)
 {
   // empty

@@ -117,7 +117,7 @@ void IrcConnector::connect(std::string const address, size_t const port)
 
 void IrcConnector::join(std::string const & channel)
 {
-  std::string const message = "JOIN " + channel;
+  std::string const message = "JOIN #" + channel;
   write(message);
 }
 void IrcConnector::nick(std::string const & nick)

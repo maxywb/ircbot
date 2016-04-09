@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <set>
+#include <unordered_set>
 
 #include <boost/shared_ptr.hpp>
 
@@ -13,21 +13,24 @@ namespace ircbot
 {
 
 class SqlConnector;
+class IrcConnectorInterface;
 
 class ConfigurationManager
 {
  private:
+  boost::shared_ptr<IrcConnectorInterface> ircConnector_;
   boost::shared_ptr<SqlConnector> sqlConnector_;
 
-  std::unordered_map<std::string, std::set<std::string>> operation_config_;
-
+  std::unordered_map<std::string, std::unordered_set<std::string>> operation_config_;
+  std::unordered_set<std::string> channels_;
 
  public:
   ConfigurationManager(){
     ASSERT(false, "Unimplemented default constructor");
   }
 
-  explicit ConfigurationManager(boost::shared_ptr<SqlConnector> sqlConnector);
+  ConfigurationManager(boost::shared_ptr<IrcConnectorInterface> ircConnector,
+                       boost::shared_ptr<SqlConnector> sqlConnector);
 
   ~ConfigurationManager();
 
@@ -39,12 +42,7 @@ class ConfigurationManager
 
   bool isEnabled(std::string const & operation, std::string const & channel);
 
-  // save to db
-  void save();
-  // load from db
-  void load();
-
-  
+  void configureBot();
 
 };
 

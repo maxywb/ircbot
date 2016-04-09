@@ -12,7 +12,9 @@
 namespace ircbot
 {
 
+class ConfigurationManager;
 class IrcConnectorInterface;
+class SqlConnector;
 
 // allow python subclass overrides
 class PythonOperation : public Operation, public boost::python::wrapper<Operation>                        
@@ -20,7 +22,8 @@ class PythonOperation : public Operation, public boost::python::wrapper<Operatio
  public:
   PythonOperation() = default;
   PythonOperation(boost::shared_ptr<IrcConnectorInterface> ircConnection,
-                  boost::shared_ptr<SqlConnector> sqlConnector);
+                  boost::shared_ptr<SqlConnector> sqlConnector,
+                  boost::shared_ptr<ConfigurationManager> configManager);
 
   void consume(std::string const line) override;
 

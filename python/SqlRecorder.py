@@ -8,8 +8,8 @@ from .util import (
 )
 
 class SqlRecorder(derived.pyircbot.PythonOperation):
-    def __init__(self, irc_connector, sql_connector):
-        super(SqlRecorder, self).__init__(irc_connector, sql_connector)
+    def __init__(self, irc_connector, sql_connector, config_manager):
+        super(SqlRecorder, self).__init__(irc_connector, sql_connector, config_manager)
         self._hostname_exempt_list = [
             "ctcp@ctcp-scanner.rizon.net",
             "break.out.another.thousand",

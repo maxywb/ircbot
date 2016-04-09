@@ -10,13 +10,17 @@
 
 #include "assert.h"
 #include "ConfigurationManager.hpp"
+#include "IrcConnectorInterface.hpp"
 #include "SqlConnector.hpp"
 
 namespace ircbot {
 
-ConfigurationManager::ConfigurationManager(boost::shared_ptr<SqlConnector> sqlConnector)
-    : sqlConnector_(sqlConnector),
-      operation_config_()
+ConfigurationManager::ConfigurationManager(boost::shared_ptr<IrcConnectorInterface> ircConnector,
+                                           boost::shared_ptr<SqlConnector> sqlConnector)
+    : ircConnector_(ircConnector),
+      sqlConnector_(sqlConnector),
+      operation_config_(),
+      channels_()
     
 {
   std::cout << "ConfigurationManager" << std::endl;
@@ -29,32 +33,33 @@ ConfigurationManager::~ConfigurationManager()
 
 void ConfigurationManager::enableOperation(std::string const & operation, std::string const & channel)
 {
-  std::cout << "enableOperation" << std::endl;
+  std::cout << "enableOperation " << operation << " " << channel << std::endl;
 }
-
 
 void ConfigurationManager::disableOperation(std::string const & operation, std::string const & channel)
 {
-  std::cout << "disableOperation" << std::endl;
-}
 
+  std::cout << "disableOperation " << operation << " " << channel << std::endl;
+}
 
 bool ConfigurationManager::isEnabled(std::string const & operation, std::string const & channel)
 {
-  std::cout << "isEnabled" << std::endl;
+  std::cout << "isEnabled " << operation << " " << channel << std::endl;
+  return true;
 }
 
-
-void ConfigurationManager::save()
+void ConfigurationManager::configureBot()
 {
-  std::cout << "save" << std::endl;
+
+  // load channels
+  auto pending_channels = sqlConnector_->getChannels();
+
+  for (auto channel : pending_channels) {
+    
+    ircConnector_->join(channel);
+    channels_.insert(channel);
+  }
+
 }
-
-void ConfigurationManager::load()
-{
-  std::cout << "load" << std::endl;
-}
-
-
 
 }

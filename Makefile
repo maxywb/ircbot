@@ -104,10 +104,6 @@ $(DERIVED)/ConfigurationManager.o: $(BASE)/src/ConfigurationManager.cpp
 
 ### misc and testing
 
-misc: misc/make_db.cpp setup
-	@echo make misc
-	$(CXX) $(CXX_FLAGS) -o $(DERIVED)/misc misc/make_db.cpp  $(LINKS) #$(SRC_FILES) $(INCLUDES)
-
 .PHONY: $(DERIVED)
 $(DERIVED): 
 	@mkdir -p derived

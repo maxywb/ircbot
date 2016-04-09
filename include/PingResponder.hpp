@@ -18,7 +18,8 @@ class PingResponder : public Operation
  public:
 
   PingResponder(boost::shared_ptr<IrcConnectorInterface> ircConnection,
-                boost::shared_ptr<SqlConnector> sqlConnector);
+                boost::shared_ptr<SqlConnector> sqlConnector,
+                boost::shared_ptr<ConfigurationManager> configManager);
   ~PingResponder();
 
   void consume(std::string const match) override;

@@ -2,7 +2,7 @@
 #define IRCBOT_SQLCONNECTOR_HPP
 
 #include <string>
-
+#include <unordered_set>
 #include <sqlite3.h> 
 
 #include "assert.h"
@@ -27,7 +27,8 @@ class SqlConnector
   SqlConnector(std::string db_filename);
   ~SqlConnector();
 
-  void log_privmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message);
+  void logPrivmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message);
+  std::unordered_set<std::string> getChannels();
 
 };
 
