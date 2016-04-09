@@ -1,5 +1,6 @@
 IGNORE_USERS = [
     '_VIPPER_',
+    'boatz',    
 ]
 
 

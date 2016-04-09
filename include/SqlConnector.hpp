@@ -16,7 +16,6 @@ class SqlConnector
 
   sqlite3 * db_;
 
-
   std::string const log_privmsg_text_ =
       "insert into privmsg_log(id, channel, nick, hostname, message) \n"\
       "values(NULL, ?,?,?,?);";
