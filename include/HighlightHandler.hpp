@@ -20,7 +20,8 @@ class HighlightHandler : public Operation
   HighlightHandler();
  public:
   HighlightHandler(boost::shared_ptr<IrcConnectorInterface> ircConnection,
-                   boost::shared_ptr<SqlConnector> sqlConnector);
+                   boost::shared_ptr<SqlConnector> sqlConnector,
+                   boost::shared_ptr<ConfigurationManager> configManager);
   ~HighlightHandler();
 
   void consume(std::string const match) override;

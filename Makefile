@@ -16,11 +16,11 @@ BOOST_INCLUDE_FLAGS = -I$(BOOST_INC)
 
 SQLITE_LD_FLAGS = -lsqlite3
 
-SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp $(BASE)/src/CommandHandler.cpp $(BASE)/src/PythonModule.cpp $(BASE)/src/SqlConnector.cpp 
+SRC_FILES = $(BASE)/src/IrcConnector.cpp $(BASE)/src/PingResponder.cpp $(BASE)/src/OperationManager.cpp $(BASE)/src/HighlightHandler.cpp $(BASE)/src/CommandHandler.cpp $(BASE)/src/PythonModule.cpp $(BASE)/src/SqlConnector.cpp $(BASE)/src/ConfigurationManager.cpp 
 
-HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnectorInterface.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp $(BASE)/include/CommandHandler.hpp $(BASE)/include/SqlConnector.hpp 
+HEADER_FILES = $(BASE)/include/PingResponder.hpp $(BASE)/include/IrcConnectorInterface.hpp $(BASE)/include/IrcConnector.hpp $(BASE)/include/assert.hpp $(BASE)/include/Operation.hpp $(BASE)/include/OperationManager.hpp $(BASE)/include/HighlightHandler.hpp $(BASE)/include/CommandHandler.hpp $(BASE)/include/SqlConnector.hpp $(BASE)/include/ConfigurationManager.hpp 
 
-IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lCommandHandler -lSqlConnector -lPythonOperation 
+IRCBOT_LD_FLAGS_NO_PYTHON = -L$(DERIVED) -lPingResponder -lIrcConnector -lOperationManager -lHighlightHandler -lCommandHandler -lSqlConnector -lConfigurationManager -lPythonOperation 
 IRCBOT_LD_FLAGS = $(IRCBOT_LD_FLAGS_NO_PYTHON) -lpyircbot
 
 INCLUDES = -I/usr/include -I$(BASE)/include $(PYTHON_INCLUDE_FLAGS) $(BOOST_INCLUDE_FLAGS)
@@ -40,7 +40,7 @@ debug: all
 $(EXECUTABLE): so python_so main.cpp
 	$(CXX) $(CXX_FLAGS) -o $(EXECUTABLE) main.cpp $(INCLUDES) $(LINKS)
 
-$(DEPEND): $(SRC_FILES) $(DERIVED) # ATTN: doesn't properly depend on $(DERIVED)
+$(DEPEND): $(SRC_FILES) $(DERIVED)
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) -MM $(SRC_FILES)>>$(DEPEND);
 
 python_so: $(DERIVED)/libpyircbot.so so
@@ -52,7 +52,7 @@ $(DERIVED)/libpyircbot.so: $(DERIVED)/pyircbot.o so
 $(DERIVED)/pyircbot.o: $(BASE)/src/PythonModule.cpp so
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
 
-so: $(DEPEND) $(DERIVED) $(DERIVED)/libIrcConnector.so $(DERIVED)/libPingResponder.so $(DERIVED)/libOperationManager.so $(DERIVED)/libHighlightHandler.so $(DERIVED)/libCommandHandler.so $(DERIVED)/libSqlConnector.so $(DERIVED)/libPythonOperation.so
+so: $(DEPEND) $(DERIVED) $(DERIVED)/libIrcConnector.so $(DERIVED)/libPingResponder.so $(DERIVED)/libOperationManager.so $(DERIVED)/libHighlightHandler.so $(DERIVED)/libCommandHandler.so $(DERIVED)/libSqlConnector.so $(DERIVED)/libConfigurationManager.so $(DERIVED)/libPythonOperation.so
 
 $(DERIVED)/libIrcConnector.so: $(DERIVED)/IrcConnector.o
 	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
@@ -96,11 +96,13 @@ $(DERIVED)/libSqlConnector.so: $(DERIVED)/SqlConnector.o
 $(DERIVED)/SqlConnector.o: $(BASE)/src/SqlConnector.cpp
 	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
 
-### misc and testing
+$(DERIVED)/libConfigurationManager.so: $(DERIVED)/ConfigurationManager.o
+	$(CXX) $(CXX_FLAGS) -shared -Wl,--export-dynamic $< $(INCLUDES) -o $@
 
-misc: misc/make_db.cpp setup
-	@echo make misc
-	$(CXX) $(CXX_FLAGS) -o $(DERIVED)/misc misc/make_db.cpp  $(LINKS) #$(SRC_FILES) $(INCLUDES)
+$(DERIVED)/ConfigurationManager.o: $(BASE)/src/ConfigurationManager.cpp
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -fPIC -c $< -o $@
+
+### misc and testing
 
 .PHONY: $(DERIVED)
 $(DERIVED): 

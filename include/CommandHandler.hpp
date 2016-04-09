@@ -23,6 +23,7 @@ class CommandHandler : public Operation
  public:
   CommandHandler(boost::shared_ptr<IrcConnector> ircConnection,
                  boost::shared_ptr<SqlConnector> sqlConnector,
+                 boost::shared_ptr<ConfigurationManager> configManager,
                  boost::shared_ptr<OperationManager> operationManager);
 
   ~CommandHandler();

@@ -2,11 +2,17 @@
 import sqlite3
 import sys
 
-if len(sys.argv) != 2:
-    print "must supply db name, and only db name"
+if len(sys.argv) <= 2:
+    print "must supply db name"
     sys.exit()
 
 db_name = sys.argv[1]
+
+try:
+    testing = sys.argv[2] == "--test"
+    print "TESTING"
+except:
+    testing = False
 
 db_connection = sqlite3.connect(db_name)
 
@@ -23,30 +29,61 @@ create_privmsg_log = '''
       );
 '''
 
-create_config = '''
-      CREATE TABLE config(
+create_channels = '''
+      CREATE TABLE channels(
        id INTEGER PRIMARY KEY NOT NULL,
-       tag TEXT NOT NULL,
-       config TEXT NOT NULL
+       channel TEXT NOT NULL
       );
 '''
 
-populate_config = [
-      """insert into config(id, tag, config)
-      values(NULL, 'channel','/g/spam');""",
-      """insert into config(id, tag, config)
-      values(NULL, 'channel','boatz');""",
-      """insert into config(id, tag, config)
-      values(NULL, 'channel','lifting');""",
-      """insert into config(id, tag, config)
-      values(NULL, 'channel','/diy/');""",
-]
+create_operations = '''
+      CREATE TABLE operations(
+       id INTEGER PRIMARY KEY NOT NULL,
+       channel TEXT NOT NULL,
+       operation TEXT NOT NULL
+      );
+'''
+
+
+if testing:
+    populate_channels = [
+        """insert into channels(id, channel)
+      values(NULL, 'boatz');""",
+    ]
+
+    populate_operations = [
+        """insert into operations(id, channel, operation)
+      values(NULL, 'boatz', 'hello');""",
+    ]
+else:
+    populate_channels = [
+        """insert into channels(id, channel)
+      values(NULL, 'boatz');""",
+        """insert into channels(id, channel)
+      values(NULL, 'lifting');""",
+        """insert into channels(id, channel)
+      values(NULL, '/diy/');""",
+    ]
+
+    populate_operations = [
+        """insert into operations(id, channel, operation)
+      values(NULL, 'boatz', 'hello');""",
+        """insert into operations(id, channel, operation)
+      values(NULL, 'lifting', 'hello');""",
+        """insert into operations(id, channel, operation)
+      values(NULL, '/diy/', 'hello');""",
+    ]
+
 
 db_cursor.execute(create_privmsg_log)
 
-db_cursor.execute(create_config)
+db_cursor.execute(create_channels)
+db_cursor.execute(create_operations)
 
-for config in populate_config:
+for config in populate_channels:
+    db_cursor.execute(config)
+
+for config in populate_operations:
     db_cursor.execute(config)
 
 db_connection.commit()
