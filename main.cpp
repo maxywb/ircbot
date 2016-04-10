@@ -97,10 +97,6 @@ int main(void) {
 
   configManager->configureBot();
 
-  //connector->join("#boatz");
-  //connector->join("#lifting");
-  //connector->join("#/hoc/");
-
   std::ifstream password_file("/home/meatwad/.ircbot.password");
   std::stringstream password_buffer;
   password_buffer << password_file.rdbuf();

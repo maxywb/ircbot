@@ -3,6 +3,8 @@
 
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
+
 #include <sqlite3.h> 
 
 #include "assert.h"
@@ -29,7 +31,7 @@ class SqlConnector
 
   void logPrivmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message);
   std::unordered_set<std::string> getChannels();
-
+  std::unordered_map<std::string, std::unordered_set<std::string>> getOperations();
 };
 
 }

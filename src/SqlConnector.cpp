@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 
 #include <sqlite3.h> 
 
@@ -79,6 +80,41 @@ std::unordered_set<std::string> SqlConnector::getChannels()
   sqlite3_finalize(get_channels_stmt);
 
   return channels;
+}
+
+std::unordered_map<std::string, std::unordered_set<std::string>> SqlConnector::getOperations()
+{
+
+  std::string const get_channels("select * from operations;");
+  std::unordered_map<std::string, std::unordered_set<std::string>> operations;
+
+  sqlite3_stmt * get_channels_stmt;
+  sqlite3_prepare(db_,
+                  get_channels.c_str(),
+                  get_channels.length(),
+                  &get_channels_stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(get_channels_stmt);
+  while(step == SQLITE_ROW){ 
+    std::string channel( reinterpret_cast<char const*>(sqlite3_column_text(get_channels_stmt, 1)));
+    std::string operation( reinterpret_cast<char const*>(sqlite3_column_text(get_channels_stmt, 2)));
+
+
+    if (operations.count(channel) == 0) {
+      operations[channel] = std::unordered_set<std::string>();
+    }
+
+    operations[channel].insert(operation);
+
+    std::cout << channel << " " << operation << std::endl;
+
+    step = sqlite3_step(get_channels_stmt);
+  } 
+
+  sqlite3_finalize(get_channels_stmt);
+
+  return operations;
 }
 
 }

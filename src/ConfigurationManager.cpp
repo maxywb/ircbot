@@ -19,7 +19,7 @@ ConfigurationManager::ConfigurationManager(boost::shared_ptr<IrcConnectorInterfa
                                            boost::shared_ptr<SqlConnector> sqlConnector)
     : ircConnector_(ircConnector),
       sqlConnector_(sqlConnector),
-      operation_config_(),
+      operations_(),
       channels_()
     
 {
@@ -44,8 +44,11 @@ void ConfigurationManager::disableOperation(std::string const & operation, std::
 
 bool ConfigurationManager::isEnabled(std::string const & operation, std::string const & channel)
 {
-  std::cout << "isEnabled " << operation << " " << channel << std::endl;
-  return true;
+  if (operations_.count(channel) == 0) {
+    return false;
+  }
+
+  return operations_[channel].count(operation) > 0;
 }
 
 void ConfigurationManager::configureBot()
@@ -59,6 +62,8 @@ void ConfigurationManager::configureBot()
     ircConnector_->join(channel);
     channels_.insert(channel);
   }
+
+  operations_ = sqlConnector_->getOperations();
 
 }
 

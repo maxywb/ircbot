@@ -9,7 +9,7 @@ if len(sys.argv) <= 2:
 db_name = sys.argv[1]
 
 try:
-    testing = sys.argv[2] == "--test"
+    testing = sys.argv[2] == "--testing" or sys.argv[2] == "--test"
     print "TESTING"
 except:
     testing = False
@@ -75,8 +75,8 @@ else:
     ]
 
 
-db_cursor.execute(create_privmsg_log)
-
+if False:
+    db_cursor.execute(create_privmsg_log)
 db_cursor.execute(create_channels)
 db_cursor.execute(create_operations)
 

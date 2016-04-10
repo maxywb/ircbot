@@ -21,7 +21,7 @@ class ConfigurationManager
   boost::shared_ptr<IrcConnectorInterface> ircConnector_;
   boost::shared_ptr<SqlConnector> sqlConnector_;
 
-  std::unordered_map<std::string, std::unordered_set<std::string>> operation_config_;
+  std::unordered_map<std::string, std::unordered_set<std::string>> operations_;
   std::unordered_set<std::string> channels_;
 
  public:
