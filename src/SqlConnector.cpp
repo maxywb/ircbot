@@ -117,4 +117,89 @@ std::unordered_map<std::string, std::unordered_set<std::string>> SqlConnector::g
   return operations;
 }
 
+std::string SqlConnector::getNick()
+{
+  std::string const get_nick("select * from misc where key = \"nick\" limit 1;");
+  std::string nick;
+
+  sqlite3_stmt * stmt;
+  sqlite3_prepare(db_,
+                  get_nick.c_str(),
+                  get_nick.length(),
+                  &stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(stmt);
+
+  nick = std::string(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
+
+  sqlite3_finalize(stmt);
+
+  return nick;
+
+}
+
+std::string SqlConnector::getPassword()
+{
+  std::string const get_password("select * from misc where key = \"password\" limit 1;");
+  std::string password;
+
+  sqlite3_stmt * stmt;
+  sqlite3_prepare(db_,
+                  get_password.c_str(),
+                  get_password.length(),
+                  &stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(stmt);
+
+  password = std::string(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
+
+  sqlite3_finalize(stmt);
+
+  return password;
+
+}
+
+std::string SqlConnector::getAdminNick()
+{
+  std::string const get_admin_nick("select * from misc where key = \"admin_nick\" limit 1;");
+  std::string admin_nick;
+
+  sqlite3_stmt * stmt;
+  sqlite3_prepare(db_,
+                  get_admin_nick.c_str(),
+                  get_admin_nick.length(),
+                  &stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(stmt);
+
+  admin_nick = std::string(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
+
+  sqlite3_finalize(stmt);
+
+  return admin_nick;
+}
+
+std::string SqlConnector::getAdminHost()
+{
+  std::string const get_admin_hostmask("select * from misc where key = \"admin_hostmask\" limit 1;");
+  std::string admin_hostmask;
+
+  sqlite3_stmt * stmt;
+  sqlite3_prepare(db_,
+                  get_admin_hostmask.c_str(),
+                  get_admin_hostmask.length(),
+                  &stmt,                           
+                  nullptr);
+
+  int step = sqlite3_step(stmt);
+
+  admin_hostmask = std::string(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
+
+  sqlite3_finalize(stmt);
+
+  return admin_hostmask;
+}
 }

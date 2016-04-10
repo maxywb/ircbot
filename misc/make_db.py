@@ -44,6 +44,25 @@ create_operations = '''
       );
 '''
 
+create_misc = '''
+      CREATE TABLE misc(
+       id INTEGER PRIMARY KEY NOT NULL,
+       key TEXT NOT NULL,
+       value TEXT NOT NULL
+      );
+'''
+with open("/home/meatwad/.ircbot.password") as f:
+    password = [x.strip('\n') for x in f.readlines()]
+    password = password[0]
+print(password)
+populate_misc = [
+    """insert into misc(id, key, value)
+    values(NULL, 'password', '%s');""" % password,
+    """insert into misc(id, key, value)
+    values(NULL, 'admin_nick', 'oatzhakok');""",
+    """insert into misc(id, key, value)
+    values(NULL, 'admin_hostmask', 'never.knows.best');""",
+]
 
 if testing:
     populate_channels = [
@@ -55,6 +74,12 @@ if testing:
         """insert into operations(id, channel, operation)
       values(NULL, 'boatz', 'hello');""",
     ]
+
+
+    populate_misc.append(
+        """insert into misc(id, key, value)
+      values(NULL, 'nick', 'boatzzz');""")
+
 else:
     populate_channels = [
         """insert into channels(id, channel)
@@ -74,16 +99,26 @@ else:
       values(NULL, '/diy/', 'hello');""",
     ]
 
+    populate_misc.append(
+        """insert into misc(id, key, value)
+      values(NULL, 'nick', 'boatz');""")
+
+
+
 
 if False:
     db_cursor.execute(create_privmsg_log)
 db_cursor.execute(create_channels)
 db_cursor.execute(create_operations)
+db_cursor.execute(create_misc)
 
 for config in populate_channels:
     db_cursor.execute(config)
 
 for config in populate_operations:
+    db_cursor.execute(config)
+
+for config in populate_misc:
     db_cursor.execute(config)
 
 db_connection.commit()

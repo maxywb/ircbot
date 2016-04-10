@@ -1,9 +1,7 @@
 #include <atomic>
 #include <chrono>
-#include <fstream>
 #include <list>
 #include <signal.h>
-#include <sstream>
 #include <string>
 
 #include <boost/make_shared.hpp>
@@ -26,8 +24,8 @@ void signal_handler(int /*signal*/)
   running_s = false;
 }
 
-int main(void) {
-  
+int main(int argc, char ** argv) {
+
   Py_Initialize();
 
   signal (SIGINT, signal_handler);
@@ -71,7 +69,8 @@ int main(void) {
 
     boost::python::object ignored = boost::python::exec("import python \n"
                                                         "sql_recorder = python.SqlRecorder(irc_connector, sql_connector, config_manager) \n"
-                                                        "h = python.HelloResponder(irc_connector, sql_connector, config_manager) \n",
+                                                        "h = python.HelloResponder(irc_connector, sql_connector, config_manager) \n"
+                                                        "bots = python.BotResponder(irc_connector, sql_connector, config_manager) \n",
                                                         mainNamespace);
     
     boost::shared_ptr<ircbot::PythonOperation> helloHandler =
@@ -86,22 +85,17 @@ int main(void) {
         "SqlRecorder",
         sqlRecorder);
 
-
-  operationManager->start();
+    boost::shared_ptr<ircbot::PythonOperation> botResponder =
+        boost::python::extract<boost::shared_ptr<ircbot::PythonOperation>>(mainNamespace["bots"]);
+    operationManager->addOperation(
+        "BotResponder",
+        botResponder);
 
   connector->connect(server, port);
-  connector->user(nick);
-  connector->nick(nick);
 
-  std::this_thread::sleep_for(std::chrono::seconds(5));
-
+  operationManager->start();  
   configManager->configureBot();
 
-  std::ifstream password_file("/home/meatwad/.ircbot.password");
-  std::stringstream password_buffer;
-  password_buffer << password_file.rdbuf();
-
-  connector->privmsg("nickserv", "identify " + password_buffer.str());
 
   while (running_s) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -117,3 +111,15 @@ int main(void) {
   }
 
 }
+
+#if 0
+
+// TODO read in python file or something nice to initialize python variables
+#include <fstream>
+#include <sstream>
+
+  std::ifstream password_file("/home/meatwad/.ircbot.password");
+  std::stringstream password_buffer;
+  password_buffer << password_file.rdbuf();
+
+#endif

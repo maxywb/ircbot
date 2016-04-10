@@ -35,6 +35,7 @@ class IrcConnector : public IrcConnectorInterface
 
   // sending commands
   void join(std::string const & channel) override;
+  void part(std::string const & channel) override;
   void nick(std::string const & nick) override;
   void privmsg(std::string const & who, std::string const & message) override;
   void user(std::string const & username) override;

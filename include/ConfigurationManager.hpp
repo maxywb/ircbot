@@ -24,6 +24,11 @@ class ConfigurationManager
   std::unordered_map<std::string, std::unordered_set<std::string>> operations_;
   std::unordered_set<std::string> channels_;
 
+  std::string nick_;
+  std::string password_;
+  std::string admin_nick_;
+  std::string admin_host_;
+
  public:
   ConfigurationManager(){
     ASSERT(false, "Unimplemented default constructor");
@@ -44,6 +49,13 @@ class ConfigurationManager
 
   void configureBot();
 
+  // queries
+  bool isAdmin(std::string const & who);
+  bool isTalkingToMe(std::string const & target);
+
+  // irc managing
+  void join(std::string const & channel);
+  void part(std::string const & channel);
 };
 
 }

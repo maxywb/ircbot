@@ -32,6 +32,11 @@ class SqlConnector
   void logPrivmsg(std::string const & where, std::string const & nick, std::string const & hostmask, std::string const & message);
   std::unordered_set<std::string> getChannels();
   std::unordered_map<std::string, std::unordered_set<std::string>> getOperations();
+
+  std::string getNick();
+  std::string getPassword();
+  std::string getAdminNick();
+  std::string getAdminHost();
 };
 
 }

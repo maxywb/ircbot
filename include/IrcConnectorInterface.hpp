@@ -20,6 +20,7 @@ class IrcConnectorInterface
 
   // sending commands
   virtual void join(std::string const & channel) = 0;
+  virtual void part(std::string const & channel) = 0;
   virtual void nick(std::string const & nick) = 0;
   virtual void privmsg(std::string const & who, std::string const & message) = 0;
   virtual void user(std::string const & username) = 0;

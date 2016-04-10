@@ -9,6 +9,7 @@
 #include "assert.hpp"
 #include "IrcConnector.hpp"
 #include "CommandHandler.hpp"
+#include "ConfigurationManager.hpp"
 #include "Operation.hpp"
 #include "OperationManager.hpp"
 #include "PythonOperation.hpp"
@@ -35,9 +36,6 @@ CommandHandler::~CommandHandler()
 void CommandHandler::consume(std::string const line)
 {
 
-  return; //ATTN doesn't do anything
-
-  
   std::vector<std::string> strs;
   boost::split(strs, line, boost::is_any_of(" \n\r\t"));
 
@@ -56,17 +54,45 @@ void CommandHandler::consume(std::string const line)
   std::string const & target = strs[3];
   std::string const & command = strs[4];
 
-  if (!(type == "PRIVMSG"
-        && dest[0] == '#'
-        && (target == ":boatzzz"
-            || target == ":boatzzz:")
-        )) {
+  if (type != "PRIVMSG") {
     return;
   }
 
+  if (!configManager_->isAdmin(who)) {
+    return;
+  }
 
+  if (!configManager_->isTalkingToMe(target)) {
+    return;
+  }
 
-  ircConnection_->privmsg(dest, "done.");
+  if (command == "join") {
+    if (strs.size() < 6) {
+      ircConnection_->privmsg(dest, "join what?");
+      return;
+    }
+    std::string const & channel = strs[5];
+
+    if (channel == "" ) {
+      ircConnection_->privmsg(dest, "join what?");
+      return;
+    }
+
+    PRINTLN("joining: (" << channel << ")");
+    configManager_->join(channel);
+  } else if (command == "part" ) {
+    if (strs.size() < 6) {
+      ircConnection_->privmsg(dest, "part what?");
+    }
+    std::string const & channel = strs[5];
+    if (channel == "" ) {
+      ircConnection_->privmsg(dest, "part what?");
+      return;
+    }
+    PRINTLN("parting: (" << channel << ")");
+    configManager_->part(channel);
+  }
+
 }
 
 }

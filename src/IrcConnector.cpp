@@ -18,6 +18,8 @@ namespace ircbot
 {
 
 IrcConnector::IrcConnector()
+    : socket_(-1),
+      writeMutex_()
 {
   // open socket
   socket_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -25,19 +27,6 @@ IrcConnector::IrcConnector()
   ASSERT(socket_ > 0, "failed to open socket"); 
   PRINTLN("opened socket");
 
-#if 0
-  // set 100 millisecond timeout
-  struct timeval tv;
-  tv.tv_sec = 0;  //seconds
-  tv.tv_usec = 100;  // not setting this can cause weird behavior
-  setsockopt(socket_,
-             SOL_SOCKET,
-             SO_RCVTIMEO,
-             (char *)&tv,
-             sizeof(struct timeval));
-
-  PRINTLN("set 1 second timeout on socket");
-#endif
 }
 
 IrcConnector::~IrcConnector()
@@ -120,6 +109,13 @@ void IrcConnector::join(std::string const & channel)
   std::string const message = "JOIN #" + channel;
   write(message);
 }
+
+void IrcConnector::part(std::string const & channel)
+{
+  std::string const message = "part #" + channel + " bye";
+  write(message);
+}
+
 void IrcConnector::nick(std::string const & nick)
 {
   std::string const message = "NICK " + nick;
@@ -188,7 +184,6 @@ void IrcConnector::pong(std::string const & value)
                               + value;
   write(message);
 }
-
 
 }
 
